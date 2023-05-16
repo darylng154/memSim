@@ -10,7 +10,7 @@ int main(int argc, char *argv[]){
     TLBTable* tlb_table = NULL;             // TLB unit
     PageTable* page_table = NULL;           // Page Table Unit
     
-    parseOptions(argc, *argv, &filename, &num_frames, &algorithm);
+    parseOptions(argc, argv, &filename, &num_frames, &algorithm);
     
     tlb_table = safeMalloc(sizeof(TLBTable));
     initTLBTable(tlb_table, MAX_TLB_SIZE_);

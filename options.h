@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#define MIN_ARGS_       3
+#define MIN_ARGS_       4
 #define PROG_NAME_LOC_  0
 #define FRAME_NUM_LOC_  2
 #define VERBOSITY_LOC_  4
