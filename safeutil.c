@@ -51,3 +51,20 @@ void *safeRealloc(void *ptr, size_t new_size, size_t curr_size, size_t type_size
     
     return new_ptr;
 }
+
+long safeStrtol(const char *str){
+    char *endptr;
+    long value = strtol(str, &endptr, 10);
+
+    if(!str) /* String is null*/
+        return 0;
+
+    if(str[0] == '\0' || endptr == str) /* Nothing found || No nums found*/
+        return 0;
+    
+    /* Check that value is within long range*/
+    if(!(*endptr == '\0' && value >= LONG_MIN && value <= LONG_MAX))
+        return 0;
+
+    return value;
+}
