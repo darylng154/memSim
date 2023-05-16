@@ -15,8 +15,9 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include "schedSim.h"
-
+#include <stdio.h>
+#include <limits.h>
+#include "options.h"
 
 FILE *safefOpen(char *file){
     FILE *file_pt;

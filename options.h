@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 
 #define MIN_ARGS_       3
 #define PROG_NAME_LOC_  0
@@ -20,8 +21,9 @@ typedef enum {FIFO, LRU, OPT, INVALID = 255} algorithm;
 
 extern uint8_t verbosity;
 
-void parseOptions(int argc, char* argv, char **filename, uint8_t *num_frames, uint8_t *algorithm);
-
+void parseOptions(int argc, char * const argv[], char **filename, uint8_t *num_frames, uint8_t *algorithm);
+uint8_t getFrameNum(char *frame_num);
+void usage(char *prog_name);
 void errorout(char *error);
 
 #endif

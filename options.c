@@ -26,7 +26,7 @@ void parseOptions(int argc,
 
     if(argc > MIN_ARGS_ && (tolower(argv[VERBOSITY_LOC_][0]) == 'v' || 
                             tolower(argv[VERBOSITY_LOC_][1]) == 'v')) /* Verbosity flag might be set*/
-        verbosity == 1;
+        verbosity = 1;
     else if (argc > MIN_ARGS_)
         usage(prog_name);
     
