@@ -1,23 +1,29 @@
 #ifndef PAGE_TABLE_H
 #define PAGE_TABLE_H
 
-#define MAXFRAME 256
+#define MAX_FRAME_ 256
 
 typedef struct page Page;
 typedef struct page_table PageTable;
 
 struct page
 {
-    uint8_t page_num;
-    uint8_t frame;
+    uint8_t frame_num;
     uint8_t valid;
 };
 
 struct page_table
 {
-    uint8_t num_pages;
-    Page pages[MAXFRAME];
+    uint8_t num_entries;
+    Page list[MAX_FRAME_];
 };
 
+void initPage(Page* tlb);
+void initPageTable(PageTable* tlb_table, uint8_t length);
+void printPage(const Page tlb, int printDetails);
+void printPageTable(const Page* list, uint8_t length, int printDetails);
+void printPageTableDebug(const PageTable tlb_table, int printDetails);
+void pageSwap(Page* dest, Page* src);
+void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid);
 
 #endif
