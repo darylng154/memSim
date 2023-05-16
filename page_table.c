@@ -32,7 +32,7 @@ void printPage(const Page page, uint8_t printDetails)
         printf("\n");
 }
 
-void printPageTable(const Page* list, uint8_t length, uint8_t printDetails)
+void printPageTable(const Page* list, uint16_t length, uint8_t printDetails)
 {
     int i = 0;
     for(i = 0; i < length; i++)
