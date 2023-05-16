@@ -11,7 +11,7 @@ void initPage(Page* page)
     page->valid = 0;
 }
 
-void initPageTable(PageTable* page_table, uint8_t length)
+void initPageTable(PageTable* page_table, uint16_t length)
 {
     page_table->num_entries = 0;
 
@@ -22,7 +22,7 @@ void initPageTable(PageTable* page_table, uint8_t length)
     }
 }
 
-void printPage(const Page page, int printDetails)
+void printPage(const Page page, uint8_t printDetails)
 {
     printf("frame_num: %- 2i | valid: %i", page.frame_num, page.frame_num);
 
@@ -32,7 +32,7 @@ void printPage(const Page page, int printDetails)
         printf("\n");
 }
 
-void printPageTable(const Page* list, uint8_t length, int printDetails)
+void printPageTable(const Page* list, uint8_t length, uint8_t printDetails)
 {
     int i = 0;
     for(i = 0; i < length; i++)
@@ -42,11 +42,11 @@ void printPageTable(const Page* list, uint8_t length, int printDetails)
     }
 }
 
-void printPageTableDebug(const PageTable page_table, int printDetails)
+void printPageTableDebug(const PageTable* page_table, uint8_t printDetails)
 {
     printf("\n\n#################################  Page Table  #################################\n");
-    printf("| num_entries: %i \n", page_table.num_entries);
-    printPageTable(page_table.list, page_table.num_entries, printDetails);
+    printf("| num_entries: %i \n", page_table->num_entries);
+    printPageTable(page_table->list, page_table->num_entries, printDetails);
     printf("################################################################################\n\n\n");
 }
 

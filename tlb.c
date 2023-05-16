@@ -22,7 +22,7 @@ void initTLBTable(TLBTable* tlb_table, uint8_t length)
     }
 }
 
-void printTLB(const TLB tlb, int printDetails)
+void printTLB(const TLB tlb, uint8_t printDetails)
 {
     printf("page_num: %- 2i | frame_num: %- 3i ", tlb.page_num, tlb.frame_num);
 
@@ -32,7 +32,7 @@ void printTLB(const TLB tlb, int printDetails)
         printf("\n");
 }
 
-void printTLBTable(const TLB* list, uint8_t length, int printDetails)
+void printTLBTable(const TLB* list, uint8_t length, uint8_t printDetails)
 {
     int i = 0;
     for(i = 0; i < length; i++)
@@ -42,11 +42,11 @@ void printTLBTable(const TLB* list, uint8_t length, int printDetails)
     }
 }
 
-void printTLBTableDebug(const TLBTable tlb_table, int printDetails)
+void printTLBTableDebug(const TLBTable* tlb_table, uint8_t printDetails)
 {
     printf("\n\n#################################  TLB Table  #################################\n");
-    printf("| num_entries: %i \n", tlb_table.num_entries);
-    printTLBTable(tlb_table.list, tlb_table.num_entries, printDetails);
+    printf("| num_entries: %i \n", tlb_table->num_entries);
+    printTLBTable(tlb_table->list, tlb_table->num_entries, printDetails);
     printf("################################################################################\n\n\n");
 }
 

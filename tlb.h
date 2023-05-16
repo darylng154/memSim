@@ -20,9 +20,9 @@ struct tlb_table
 
 void initTLB(TLB* tlb);
 void initTLBTable(TLBTable* tlb_table, uint8_t length);
-void printTLB(const TLB tlb, int printDetails);
-void printTLBTable(const TLB* list, uint8_t length, int printDetails);
-void printTLBTableDebug(const TLBTable tlb_table, int printDetails);
+void printTLB(const TLB tlb, uint8_t printDetails);
+void printTLBTable(const TLB* list, uint8_t length, uint8_t printDetails);
+void printTLBTableDebug(const TLBTable* tlb_table, uint8_t printDetails);
 void tlbSwap(TLB* dest, TLB* src);
 void setTLB(TLB* list, uint8_t index, uint8_t page_num, uint8_t frame_num);
 
