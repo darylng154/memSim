@@ -9,7 +9,7 @@ typedef struct page_table PageTable;
 struct page
 {
     uint8_t page_num;
-    uint8_t frame[MAXFRAME];
+    uint8_t frame;
     uint8_t valid;
 };
 
