@@ -23,6 +23,8 @@ void initTLBTable(TLBTable* tlb_table, uint8_t length);
 void printTLB(const TLB tlb, int printDetails);
 void printTLBTable(const TLB* list, uint8_t length, int printDetails);
 void printTLBTableDebug(const TLBTable tlb_table, int printDetails);
+void tlbSwap(TLB* dest, TLB* src);
+void setTLBNumber(TLB* list, uint8_t index, uint8_t page_num, uint8_t frame_num);
 
 
 #endif
