@@ -13,7 +13,7 @@ void initTLB(TLB* tlb)
 
 void initTLBTable(TLBTable* tlb_table, uint8_t length)
 {
-    tlb_table->num_pages = 0;
+    tlb_table->num_entries = 0;
 
     int i = 0;
     for(i = 0; i < length; i++)
@@ -24,7 +24,7 @@ void initTLBTable(TLBTable* tlb_table, uint8_t length)
 
 void printTLB(const TLB tlb, int printDetails)
 {
-    printf("page_num: %- 2d | frame_num: %- 2i ", tlb.page_num, tlb.frame_num);
+    printf("page_num: %- 2i | frame_num: %- 3i ", tlb.page_num, tlb.frame_num);
 
     if(printDetails)
         printf("future stuff (set printDetails = 0 atm)");
@@ -37,7 +37,7 @@ void printTLBTable(const TLB* list, uint8_t length, int printDetails)
     int i = 0;
     for(i = 0; i < length; i++)
     {
-        printf("TLB[%- 2d]: ", i);
+        printf("TLB[%- 2i]: ", i);
         printTLB(list[i], printDetails);
     }
 }
@@ -45,8 +45,8 @@ void printTLBTable(const TLB* list, uint8_t length, int printDetails)
 void printTLBTableDebug(const TLBTable tlb_table, int printDetails)
 {
     printf("\n\n#################################  TLB Table  #################################\n");
-    printf("| numtlbs: %d \n", tlb_table.num_pages);
-    printTLBTable(tlb_table.list, tlb_table.num_pages, printDetails);
+    printf("| num_entries: %i \n", tlb_table.num_entries);
+    printTLBTable(tlb_table.list, tlb_table.num_entries, printDetails);
     printf("################################################################################\n\n\n");
 }
 
@@ -57,7 +57,7 @@ void tlbSwap(TLB* dest, TLB* src)
     *src = temp;
 }
 
-void setTLBNumber(TLB* list, uint8_t index, uint8_t page_num, uint8_t frame_num)
+void setTLB(TLB* list, uint8_t index, uint8_t page_num, uint8_t frame_num)
 {
     list[index].page_num = page_num;
     list[index].frame_num = frame_num;
