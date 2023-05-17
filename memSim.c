@@ -4,11 +4,11 @@
 #include "page_table.h"
 
 int main(int argc, char *argv[]){
-    char *filename;                           /* Holds the file name*/
-    uint8_t num_frames = DEFAULT_FRAMES_; /* Holds the number of frames*/
+    char *filename;                       /* Holds the file name*/
+    uint8_t num_frames = MAX_FRAMES_;     /* Holds the number of frames*/
     uint8_t algorithm = DEFAULT_ALGO_;    /* Holds the alogrithm*/
-    TLBTable* tlb_table = NULL;             // TLB unit
-    PageTable* page_table = NULL;           // Page Table Unit
+    TLBTable* tlb_table = NULL;           // TLB unit
+    PageTable* page_table = NULL;         // Page Table Unit
     
     parseOptions(argc, argv, &filename, &num_frames, &algorithm);
     
@@ -25,8 +25,10 @@ int main(int argc, char *argv[]){
     // page_table->num_entries = MAX_FRAME_;
 
     // 0 is printDetails: for more details in later implementation
-    printTLBTableDebug(tlb_table, 0);      
-    printPageTableDebug(page_table, 0);   
+    if(verbosity){
+        printTLBTableDebug(tlb_table, 0);
+        printPageTableDebug(page_table, 0);
+    }
 
     return 0; 
 }
