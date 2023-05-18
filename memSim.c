@@ -14,6 +14,28 @@ uint16_t maskFileInts(uint32_t logical_address)
     return result;
 }
 
+// masks the 16 rightmost bits to get the left 8-bits = page #
+uint8_t maskPageNum(uint16_t right_most_bits)
+{
+    uint8_t result = 0;
+    uint16_t mask = 0x0000FF00;
+
+    result = (right_most_bits & mask) >> 8;
+
+    return result;
+}
+
+// masks the 16 rightmost bits to get the left 8-bits = page #
+uint8_t maskOffset(uint16_t right_most_bits)
+{
+    uint8_t result = 0;
+    uint16_t mask = 0x000000FF;
+
+    result = right_most_bits & mask;
+
+    return result;
+}
+
 int main(int argc, char *argv[]){
     char *filename;                       /* Holds the file name*/
     uint8_t num_frames = MAX_FRAMES_;     /* Holds the number of frames*/
@@ -36,7 +58,10 @@ int main(int argc, char *argv[]){
     // page_table->num_entries = MAX_FRAME_;
 
     uint32_t test = 0x12345678;
-    printf("mask test: %0x", maskFileInts(test));
+    uint16_t right_most_bits = maskFileInts(test);
+    printf("mask right_most_bits: %0x | page #: %0x | offset: %0x", right_most_bits, 
+                                                                    maskPageNum(right_most_bits), 
+                                                                    maskOffset(right_most_bits));
 
     // 0 is printDetails: for more details in later implementation
     if(verbosity){
