@@ -36,6 +36,32 @@ uint8_t maskOffset(uint16_t right_most_bits)
     return result;
 }
 
+void runAlgorithm(uint16_t* right_most_bits, uint8_t algorithm)
+{
+    switch(algorithm)
+    {
+        case 0:
+            if(verbosity)
+                printf("Running FIFO\n");
+            break;
+
+        case 1:
+            if(verbosity)
+                printf("Running LRU\n");
+            break;
+
+        case 2:
+            if(verbosity)
+                printf("Running OPT\n");
+            break;
+
+        default:
+            perror("#ERROR: runAlgorithm defaulted, %u does not exist\n");
+            exit(EXIT_FAILURE);
+            break;
+    }
+}
+
 int main(int argc, char *argv[]){
     char *filename;                       /* Holds the file name*/
     uint8_t num_frames = MAX_FRAMES_;     /* Holds the number of frames*/
@@ -59,9 +85,12 @@ int main(int argc, char *argv[]){
 
     uint32_t test = 0x12345678;
     uint16_t right_most_bits = maskFileInts(test);
-    printf("mask right_most_bits: %0x | page #: %0x | offset: %0x", right_most_bits, 
+    printf("mask right_most_bits: %0x | page #: %0x | offset: %0x \n", right_most_bits, 
                                                                     maskPageNum(right_most_bits), 
                                                                     maskOffset(right_most_bits));
+
+    uint16_t set[3] = {0x1122, 0x2233, 0x3344};
+    runAlgorithm(set, algorithm);
 
     // 0 is printDetails: for more details in later implementation
     if(verbosity){
