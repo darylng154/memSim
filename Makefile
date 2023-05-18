@@ -33,7 +33,7 @@ lru: clean memSim
 opt: clean memSim
 	./memSim testcases/$(TESTFILE) $(MAXFRAMES) OPT -v
 
-testfails:
+testfails: clean memSim
 	@echo ------------- Executing $(PROG) usage test 1 -------------
 	-./$(PROG)
 	@echo
@@ -56,7 +56,7 @@ testfails:
 	-./$(PROG) 241 FIFO
 	@echo
 
-testvalids:
+testvalids: clean memSim
 	@echo ------------- Executing $(PROG) valid test 1 -------------
 	-./$(PROG) $(TESTFILE) 148 OPT
 	@echo

@@ -18,8 +18,8 @@ int main(int argc, char *argv[]){
     page_table = safeMalloc(sizeof(PageTable));
     initPageTable(page_table, MAX_FRAME_);
 
-    tlb_table->num_entries = 10;
-    page_table->num_entries = 10;
+    // tlb_table->num_entries = 10;
+    // page_table->num_entries = 10;
 
     // tlb_table->num_entries = MAX_TLB_SIZE_;
     // page_table->num_entries = MAX_FRAME_;
