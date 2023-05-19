@@ -96,8 +96,8 @@ int main(int argc, char *argv[]){
 
     printf("mask right_most_bits (unmodified): %0x \n", right_most_bits);
 
-    uint16_t set[3] = {0x1122, 0x2233, 0x3344};
-    runAlgorithm(set, algorithm);
+    // uint16_t set[3] = {0x1122, 0x2233, 0x3344};
+    // runAlgorithm(set, algorithm);
 
     // 0 is printDetails: for more details in later implementation
     if(verbosity){

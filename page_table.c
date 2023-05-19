@@ -61,21 +61,21 @@ void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid)
 // if page is in Page Table == 1, else == 0
 int isPageInPageTable(PageTable* page_table, uint8_t page_num)
 {
-    int inPageTable = 0;
     int i = 0;
     for(i = 0; i < page_table->num_entries; i++)
     {
-        // if(page_table->)
+        if(page_table->list[i].valid == 1)
+            return 1;
     }
 
-    return inPageTable;
+    return 0;
 }
 
-void pageTableFIFO(PageTable* page_table, uint16_t* right_most_bits)
+void pageTableFIFO(AddressTable* address_table, PageTable* page_table)
 {
     int i = 0;
     for(i = 0; i < page_table->num_entries; i++)
     {
-        
+
     }
 }
