@@ -1,7 +1,7 @@
 #ifndef TLB_H
 #define TLB_H
 
-#define MAX_TLB_SIZE_ 16
+#include "address.h"
 
 typedef struct tlb TLB;
 typedef struct tlb_table TLBTable;

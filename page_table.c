@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-
 #include "page_table.h"
 
 void initPage(Page* page)
@@ -61,4 +56,13 @@ void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid)
 {
     list[index].frame_num = frame_num;
     list[index].valid = valid;
+}
+
+void pageTableFIFO(PageTable* page_table, uint16_t* right_most_bits)
+{
+    int i = 0;
+    for(i = 0; i < page_table->num_entries; i++)
+    {
+        // if()
+    }
 }

@@ -4,9 +4,9 @@ CC = gcc
 CFLAGS = -g -Wall -Werror
 
 PROG   = memSim
-SRCS   = memSim.c page_table.c tlb.c safeutil.c options.c
-OBJS   = memSim.o page_table.o tlb.o safeutil.o options.o
-HEADER = memSim.o page_table.h tlb.h safeutil.h options.h
+SRCS   = memSim.c page_table.c tlb.c safeutil.c options.c address.c
+OBJS   = memSim.o page_table.o tlb.o safeutil.o options.o address.o
+HEADER = memSim.o page_table.h tlb.h safeutil.h options.h address.h
 
 MAXFRAMES = 256
 MINFRAMES = 1
