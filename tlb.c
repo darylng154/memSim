@@ -42,7 +42,7 @@ void printTLBTableDebug(const TLBTable* tlb_table, uint8_t printDetails)
     printf("\n\n#################################  TLB Table  #################################\n");
     printf("| num_entries: %i \n", tlb_table->num_entries);
     printTLBTable(tlb_table->list, tlb_table->num_entries, printDetails);
-    printf("################################################################################\n\n\n");
+    printf("###############################################################################\n\n\n");
 }
 
 void tlbSwap(TLB* dest, TLB* src)
