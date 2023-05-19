@@ -42,7 +42,7 @@ void printAddressFrame(const uint8_t* frame)
 
 void printAddress(const Address address, uint8_t printFrame)
 {
-    printf("address: %05x | byte_referenced: %-3i | frame_num: %-3i ", address.address, address.byte_referenced, address.frame_num);
+    printf("address: %05x | page_num: %-3i | offset: %-3i | byte_referenced: %-3i | frame_num: %-3i ", address.address, address.page_num, address.offset, address.byte_referenced, address.frame_num);
 
     if(printFrame)
         printAddressFrame(address.frame);
