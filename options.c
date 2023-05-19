@@ -17,7 +17,7 @@ void parseOptions(int argc,
                   char * const argv[], 
                   char **filename, 
                   uint8_t *num_frames, 
-                  uint8_t *algorithm)
+                  Algorithm *algorithm)
 {
     char *prog_name = argv[PROG_NAME_LOC_];
     /* Check for usage errors*/

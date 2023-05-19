@@ -31,7 +31,7 @@ typedef struct algorithm_map{
     Algorithm algorithm;
 } algo_map;
 
-void parseOptions(int argc, char * const argv[], char **filename, uint8_t *num_frames, uint8_t *algorithm);
+void parseOptions(int argc, char * const argv[], char **filename, uint8_t *num_frames, Algorithm *algorithm);
 uint8_t getFrameNum(char *frame_num);
 uint8_t getAlgorithm(char *algorithm);
 void usage(char *prog_name);
