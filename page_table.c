@@ -58,6 +58,11 @@ void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid)
     list[index].valid = valid;
 }
 
+int isPageInPageTable(PageTable* page_table, uint8_t page_num)
+{
+    return 0;
+}
+
 void pageTableFIFO(PageTable* page_table, uint16_t* right_most_bits)
 {
     int i = 0;

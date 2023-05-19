@@ -3,6 +3,9 @@
 void initAddress(Address* address)
 {
     address->address = 0;
+    address->page_num = 0;
+    address->offset = 0;
+
     address->byte_referenced = 0;
     address->frame_num = 0;
 

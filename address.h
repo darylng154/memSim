@@ -14,6 +14,9 @@ typedef struct addresses Addresses;
 struct address
 {
     uint32_t address;
+    uint8_t page_num;
+    uint8_t offset;
+
     int byte_referenced;
     uint8_t frame_num;
     uint8_t frame[MAX_FRAME_SIZE_];
