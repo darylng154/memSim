@@ -54,8 +54,9 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
 int main(int argc, char *argv[]){
     char *filename;                       /* Name of input file*/
     uint8_t num_frames = MAX_FRAMES_;     /* User specified number of frames*/
-    uint8_t algorithm = DEFAULT_ALGO_;    /* User specified Algorithm*/
+    Algorithm algorithm = DEFAULT_ALGO_;    /* User specified Algorithm*/
     FILE *file_ptr;                       /* Pointer to file*/
+    // FILE *bin_ptr;                        /* Pointer to bin*/
     unsigned int address_count;           /* Number addresses found in file*/
     unsigned int *address_list = NULL;    /* List of addresses*/
     TLBTable* tlb_table = NULL;           // TLB unit
@@ -65,9 +66,10 @@ int main(int argc, char *argv[]){
     /* Get the user input from the terminal and perform checks*/
     parseOptions(argc, argv, &filename, &num_frames, &algorithm);
 
-    file_ptr = safefOpen(filename);
+    file_ptr = safefOpen(filename); /* Open the user input file*/
     /* Read the file and return a list of addresses and address count*/
     readFile(file_ptr, &address_list, &address_count);
+    fclose(file_ptr);
 
     tlb_table = safeMalloc(sizeof(TLBTable));
     initTLBTable(tlb_table, MAX_TLB_SIZE_);

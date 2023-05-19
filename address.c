@@ -92,21 +92,21 @@ uint8_t maskOffset(const uint16_t right_most_bits)
     return result;
 }
 
-void runAlgorithm(uint16_t* right_most_bits, uint8_t algorithm)
+void runAlgorithm(uint16_t* right_most_bits, Algorithm algorithm)
 {
     switch(algorithm)
     {
-        case 0:
+        case FIFO:
             if(verbosity)
                 printf("Running FIFO\n");
             break;
 
-        case 1:
+        case LRU:
             if(verbosity)
                 printf("Running LRU\n");
             break;
 
-        case 2:
+        case OPT:
             if(verbosity)
                 printf("Running OPT\n");
             break;
