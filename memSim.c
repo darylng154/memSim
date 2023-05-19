@@ -3,12 +3,55 @@
 #include "tlb.h"
 #include "page_table.h"
 
-<<<<<<< HEAD
+
 #define BUFFER_ 1024
 
-void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address_count);
+/**
+ * @fn	   : readFile
+ * @brief  : 
+ * @retval : void
+ * @parms  : FILE *file_ptr, unsigned int *address_list, unsigned int *num_addresses
+ */
+void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address_count){
+    //int i;
+    unsigned int address;
+    uint16_t running_count = 0;
+    size_t buffer_size = BUFFER_;
+    unsigned int *addresses = NULL;
 
-=======
+    addresses = (unsigned int *)safeMalloc(sizeof(unsigned int) * buffer_size); /* Make space*/
+    // addresses = (unsigned int *)calloc(buffer_size, buffer_size)
+
+    errno = 0;
+    while(!feof(file_ptr)){ /* While not at EOF*/
+        fscanf(file_ptr, "%u", &address); /* Scan for addresses*/
+        if(verbosity)
+            printf("Address: %u\n", address);
+        addresses[running_count] = address; /* Store address*/
+        running_count++; /* Increment running address counter*/
+        if(running_count > 1248)
+            printf("Near broken spot");
+        if(running_count >= (buffer_size - 1)){ /* Need more space*/
+            addresses = (unsigned int *)safeRealloc(addresses, buffer_size + BUFFER_, buffer_size, sizeof(unsigned int));
+            buffer_size += BUFFER_; /* Increase buffer size*/
+        }
+    }
+    
+    if(errno) /* Something went wrong*/
+        errorout("ReadFile failed.\n");
+
+    if(verbosity)
+        printf("Total number of addresses: %u\n", running_count);
+    *address_count = running_count; /* Save job count*/
+
+    *address_list = (unsigned int *)safeMalloc(sizeof(unsigned int) * running_count);
+
+    memcpy(*address_list, addresses, sizeof(unsigned int) * running_count);
+
+    free(addresses);
+    return;
+}
+
 // masks the 32-bit logical address to get the 16 rightmost bits (= 8-bit page #, 2 8-bit page offset)
 uint16_t maskFileInts(uint32_t logical_address)
 {
@@ -67,7 +110,6 @@ void runAlgorithm(uint16_t* right_most_bits, uint8_t algorithm)
             break;
     }
 }
->>>>>>> 093e65052641cf56e52fbb3fb7efcddce22e2ccc
 
 int main(int argc, char *argv[]){
     char *filename;                       /* Name of input file*/
@@ -114,51 +156,4 @@ int main(int argc, char *argv[]){
     }
 
     return 0; 
-}
-
-
-/**
- * @fn	   : readFile
- * @brief  : 
- * @retval : void
- * @parms  : FILE *file_ptr, unsigned int *address_list, unsigned int *num_addresses
- */
-void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address_count){
-    //int i;
-    unsigned int address;
-    uint16_t running_count = 0;
-    size_t buffer_size = BUFFER_;
-    unsigned int *addresses = NULL;
-
-    addresses = (unsigned int *)safeMalloc(sizeof(unsigned int) * buffer_size); /* Make space*/
-    // addresses = (unsigned int *)calloc(buffer_size, buffer_size)
-
-    errno = 0;
-    while(!feof(file_ptr)){ /* While not at EOF*/
-        fscanf(file_ptr, "%u", &address); /* Scan for addresses*/
-        if(verbosity)
-            printf("Address: %u\n", address);
-        addresses[running_count] = address; /* Store address*/
-        running_count++; /* Increment running address counter*/
-        if(running_count > 1248)
-            printf("Near broken spot");
-        if(running_count >= (buffer_size - 1)){ /* Need more space*/
-            addresses = (unsigned int *)safeRealloc(addresses, buffer_size + BUFFER_, buffer_size, sizeof(unsigned int));
-            buffer_size += BUFFER_; /* Increase buffer size*/
-        }
-    }
-    
-    if(errno) /* Something went wrong*/
-        errorout("ReadFile failed.\n");
-
-    if(verbosity)
-        printf("Total number of addresses: %u\n", running_count);
-    *address_count = running_count; /* Save job count*/
-
-    *address_list = (unsigned int *)safeMalloc(sizeof(unsigned int) * running_count);
-
-    memcpy(*address_list, addresses, sizeof(unsigned int) * running_count);
-
-    free(addresses);
-    return;
 }
