@@ -16,14 +16,14 @@ void initAddress(Address* address)
     }
 }
 
-void initAddresses(Addresses* addresses, uint32_t length)
+void initAddresses(AddressTable* address_table, uint32_t length)
 {
-    addresses->num_entries = 0;
+    address_table->num_entries = 0;
 
     int i = 0;
     for(i = 0; i < length; i++)
     {
-        initAddress(&addresses->addresses[i]);
+        initAddress(&address_table->list[i]);
     }
 }
 
@@ -50,12 +50,12 @@ void printAddress(const Address address, uint8_t printFrame)
         printf("\n");
 }
 
-void printAddresses(const Addresses* addresses, uint8_t printFrame)
+void printAddresses(const AddressTable* address_table, uint8_t printFrame)
 {
     int i = 0;
-    for(i = 0; i < addresses->num_entries; i++)
+    for(i = 0; i < address_table->num_entries; i++)
     {
-        printAddress(addresses->addresses[i], printFrame);
+        printAddress(address_table->list[i], printFrame);
     }
 }
 
