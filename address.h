@@ -22,10 +22,10 @@ struct address
     uint8_t frame[MAX_FRAME_SIZE_];
 };
 
-struct addresses
+struct address_table
 {
     uint32_t num_entries;
-    Address* addresses;
+    Address* list;
 };
 
 void initAddress(Address* address);
