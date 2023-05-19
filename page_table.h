@@ -25,7 +25,7 @@ void printPageTable(const Page* list, uint16_t length, uint8_t printDetails);
 void printPageTableDebug(const PageTable* page_table, uint8_t printDetails);
 void pageSwap(Page* dest, Page* src);
 void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid);
-int isPageInPageTable(PageTable* page_table, uint8_t page_num);
-void pageTableFIFO(AddressTable* address_table, PageTable* page_table);
+int isPageNumValid(PageTable* page_table, uint8_t page_num);
+void checkPageTable(AddressTable* address_table, PageTable* page_table);
 
 #endif

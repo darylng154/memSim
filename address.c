@@ -59,8 +59,17 @@ void printAddresses(const AddressTable* address_table, uint8_t printFrame)
     }
 }
 
+void addAddress(Address* address, const uint32_t logical_address)
+{
+    uint16_t right_most_bits = maskLogicalAddress(logical_address);
+
+    address->address = logical_address;
+    address->page_num = maskPageNum(right_most_bits);
+    address->offset = maskOffset(right_most_bits);
+}
+
 // masks the 32-bit logical address to get the 16 rightmost bits (= 8-bit page #, 2 8-bit page offset)
-uint16_t maskFileInts(const uint32_t logical_address)
+uint16_t maskLogicalAddress(const uint32_t logical_address)
 {
     uint16_t result = 0;
     uint32_t mask = 0x0000FFFF;

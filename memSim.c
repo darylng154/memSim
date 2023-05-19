@@ -51,6 +51,15 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
     return;
 }
 
+void tempInitAddressList(Address* list, int length)
+{
+    int i = 0;
+    for(i = 0; i < length; i++)
+    {
+        initAddress(&list[i]);
+    }
+}
+
 int main(int argc, char *argv[]){
     char *filename;                       /* Name of input file*/
     uint8_t num_frames = MAX_FRAMES_;     /* User specified number of frames*/
@@ -89,15 +98,21 @@ int main(int argc, char *argv[]){
 
     // uint32_t test = 0x12345678;
     uint32_t test = 64815;
-    uint16_t right_most_bits = maskFileInts(test);
+    uint16_t right_most_bits = maskLogicalAddress(test);
     printf("mask right_most_bits: %0x | page #: %0x | offset: %0x \n", right_most_bits, 
                                                                     maskPageNum(right_most_bits), 
                                                                     maskOffset(right_most_bits));
 
     printf("mask right_most_bits (unmodified): %0x \n", right_most_bits);
 
-    // uint16_t set[3] = {0x1122, 0x2233, 0x3344};
-    // runAlgorithm(set, algorithm);
+    // uint32_t temp_set[5] = {16916, 62493, 30198, 53683, 18295};
+    Address temp_address_list[5];
+    tempInitAddressList(temp_address_list, 5);
+
+    // ---------------------------- Testing Page Table ------------------------------------
+    
+
+
 
     // 0 is printDetails: for more details in later implementation
     if(verbosity){

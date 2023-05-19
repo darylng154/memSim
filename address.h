@@ -33,7 +33,7 @@ void initAddresses(AddressTable* address_table, uint32_t length);
 void printAddressFrame(const uint8_t* frame);
 void printAddress(const Address address, uint8_t printFrame);
 void printAddresses(const AddressTable* address_table, uint8_t printFrame);
-uint16_t maskFileInts(const uint32_t logical_address);
+uint16_t maskLogicalAddress(const uint32_t logical_address);
 uint8_t maskPageNum(const uint16_t right_most_bits);
 uint8_t maskOffset(const uint16_t right_most_bits);
 void runAlgorithm(AddressTable* address_table, Algorithm algorithm);
