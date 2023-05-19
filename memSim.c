@@ -30,8 +30,6 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
             printf("Address: %u\n", address);
         addresses[running_count] = address; /* Store address*/
         running_count++; /* Increment running address counter*/
-        if(running_count > 1248)
-            printf("Near broken spot");
         if(running_count >= (buffer_size - 1)){ /* Need more space*/
             addresses = (unsigned int *)safeRealloc(addresses, buffer_size + BUFFER_, buffer_size, sizeof(unsigned int));
             buffer_size += BUFFER_; /* Increase buffer size*/
