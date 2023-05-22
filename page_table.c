@@ -81,10 +81,14 @@ void checkPageTable(AddressTable* address_table, PageTable* page_table)
             // page # is in PageTable => 
             // w/ TLB: populate TLB w/ page
             // w/o TLB: make physical address - get frame # & page_offset = frame_offset?
+            if(verbosity)
+                printf("Page %i Exists \n", address_table->list[i].page_num);
         }
         else
         {
             // get page from .bin
+            if(verbosity)
+                printf("Page %i Doesn't Exists \n", address_table->list[i].page_num);
         }
     }
 }

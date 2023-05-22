@@ -96,29 +96,30 @@ int main(int argc, char *argv[]){
     // tlb_table->num_entries = MAX_TLB_SIZE_;
     // page_table->num_entries = MAX_FRAME_SIZE_;
 
-    // uint32_t test = 0x12345678;
-    uint32_t test = 64815;
-    uint16_t right_most_bits = maskLogicalAddress(test);
-    printf("mask right_most_bits: %0x | page #: %0x | offset: %0x \n", right_most_bits, 
-                                                                    maskPageNum(right_most_bits), 
-                                                                    maskOffset(right_most_bits));
-
-    printf("mask right_most_bits (unmodified): %0x \n", right_most_bits);
-
-    // uint32_t temp_set[5] = {16916, 62493, 30198, 53683, 18295};
+    uint32_t temp_set[5] = {16916, 62493, 30198, 53683, 18295};
     Address temp_address_list[5];
     tempInitAddressList(temp_address_list, 5);
 
     // ---------------------------- Testing Page Table ------------------------------------
-    
+    int i = 0;
+    for(i = 0; i < 5; i++)
+    {
+        addAddress(&temp_address_list[i], temp_set[i]);
+    }
 
-
+    if(verbosity)
+    {
+        for(i = 0; i < 5; i++)
+        {
+            printAddress(temp_address_list[i], 0);
+        }
+    }
 
     // 0 is printDetails: for more details in later implementation
     if(verbosity){
-        printTLBTableDebug(tlb_table, 0);
-        printPageTableDebug(page_table, 0);
-        printAddress(*address, 0);
+        // printTLBTableDebug(tlb_table, 0);
+        // printPageTableDebug(page_table, 0);
+        // printAddress(*address, 0);
     }
 
     return 0; 
