@@ -5,8 +5,8 @@
 #include "page_table.h"
 
 
-#define BUFFER_ 1024
-
+#define BUFFER_     1024
+#define BIN_BUFFER_ 65536
 /**
  * @fn	   : readFile
  * @brief  : 
@@ -28,8 +28,9 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
         fscanf(file_ptr, "%u", &address); /* Scan for addresses*/
         if(verbosity)
             printf("Address: %u\n", address);
-        addresses[running_count] = address; /* Store address*/
-        running_count++; /* Increment running address counter*/
+        if(address != '\n')
+            addresses[running_count++] = address; /* Store address*/
+            // running_count++; /* Increment running address counter*/
         if(running_count >= (buffer_size - 1)){ /* Need more space*/
             addresses = (unsigned int *)safeRealloc(addresses, buffer_size + BUFFER_, buffer_size, sizeof(unsigned int));
             buffer_size += BUFFER_; /* Increase buffer size*/
@@ -51,18 +52,68 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
     return;
 }
 
+void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
+    char *buffer;
+    int size, i, c;
+    
+    size = BIN_BUFFER_;
+
+    buffer = (char *)safeMalloc(size * sizeof(char));
+
+    errno = 0;
+    while(EOF != (c = fgetc(bin_fptr))){
+        if(i >= size - 2){/* Reached end of buffer. Get more space*/
+            buffer = (char *)safeRealloc(bin_fptr, size + BIN_BUFFER_, size, sizeof(char));
+            size += BIN_BUFFER_;
+        }
+        buffer[i++] = c;
+    }
+
+    if(i > 0)
+        buffer[i] = '\0';
+    else if(i == 0 && c == EOF){
+        free(buffer);
+        *bin_buffer = NULL;
+        return;
+    }
+    else
+        errorout("Something went wrong with readBin.\n");
+    if(buffer) /* Shrink buffer if not NULL*/
+        buffer = (char *)safeRealloc(buffer, (i + 1), size, sizeof(char));
+    
+    memcpy(bin_buffer, buffer, i + 1);
+    free(buffer);
+    
+    return;
+}
+
+
+// Addresses *populateAddresses(Address *address, unsigned int *address_list, unsigned int address_count){
+//     int i;
+
+    // for(i = 0; i < address_count; i++){
+    //     addresses_info[i]. = address_count
+    // }
+
+// }
+
+
 int main(int argc, char *argv[]){
     char *filename;                       /* Name of input file*/
     uint8_t num_frames = MAX_FRAMES_;     /* User specified number of frames*/
-    Algorithm algorithm = DEFAULT_ALGO_;    /* User specified Algorithm*/
+    Algorithm algorithm = DEFAULT_ALGO_;  /* User specified Algorithm*/
     FILE *file_ptr;                       /* Pointer to file*/
-    // FILE *bin_ptr;                        /* Pointer to bin*/
+    FILE *bin_fptr;                        /* Pointer to bin*/
+    char *bin_file_path = "bin/BACKING_STORE.bin";
+    char *bin_buffer = NULL;              /* Bin buffer*/
+    unsigned int bin_size = 0;            /* Size of backing store*/
     unsigned int address_count;           /* Number addresses found in file*/
     unsigned int *address_list = NULL;    /* List of addresses*/
     TLBTable* tlb_table = NULL;           // TLB unit
     PageTable* page_table = NULL;         // Page Table Unit
     Address* address = NULL;
-    
+    Addresses *addresses_info = NULL;     /* List of address struct's info*/
+
     /* Get the user input from the terminal and perform checks*/
     parseOptions(argc, argv, &filename, &num_frames, &algorithm);
 
@@ -71,14 +122,25 @@ int main(int argc, char *argv[]){
     readFile(file_ptr, &address_list, &address_count);
     fclose(file_ptr);
 
+    bin_fptr = safefOpen(bin_file_path);
+    readBin(bin_fptr, &bin_buffer, &bin_size);
+
+    printf("Bin: %s", bin_buffer);
+
+    initAddresses(addresses_info, address_count);
+    addresses_info->num_entries = address_count;
+    // addresses_info->addresses   = populateAddresses(addresses_info, 
+                                                    // address_list, 
+                                                    // address_count);
+
     tlb_table = safeMalloc(sizeof(TLBTable));
     initTLBTable(tlb_table, MAX_TLB_SIZE_);
 
     page_table = safeMalloc(sizeof(PageTable));
     initPageTable(page_table, MAX_FRAME_SIZE_);
 
-    address = safeMalloc(sizeof(Address));
-    initAddress(address);
+    // address = safeMalloc(sizeof(Address));
+    // initAddress(address);
 
     // tables limit testing
     // tlb_table->num_entries = 10;
