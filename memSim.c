@@ -70,7 +70,8 @@ int main(int argc, char *argv[]){
     unsigned int *address_list = NULL;    /* List of addresses*/
     TLBTable* tlb_table = NULL;           // TLB unit
     PageTable* page_table = NULL;         // Page Table Unit
-    Address* address = NULL;
+    Address* address = NULL;                // temp for testing
+    AddressTable* address_table = NULL;
     
     /* Get the user input from the terminal and perform checks*/
     parseOptions(argc, argv, &filename, &num_frames, &algorithm);
@@ -89,38 +90,15 @@ int main(int argc, char *argv[]){
     address = safeMalloc(sizeof(Address));
     initAddress(address);
 
-    // tables limit testing
-    // tlb_table->num_entries = 10;
-    // page_table->num_entries = 10;
-
-    // tlb_table->num_entries = MAX_TLB_SIZE_;
-    // page_table->num_entries = MAX_FRAME_SIZE_;
-
-    uint32_t temp_set[5] = {16916, 62493, 30198, 53683, 18295};
-    Address temp_address_list[5];
-    tempInitAddressList(temp_address_list, 5);
-
-    // ---------------------------- Testing Page Table ------------------------------------
-    int i = 0;
-    for(i = 0; i < 5; i++)
-    {
-        addAddress(&temp_address_list[i], temp_set[i]);
-    }
-
-    if(verbosity)
-    {
-        for(i = 0; i < 5; i++)
-        {
-            printAddress(temp_address_list[i], 0);
-        }
-    }
+    initAddressTable(&address_table, address_count);
+    parseToAddressTable(address_table, address_list, address_count);
 
     // 0 is printDetails: for more details in later implementation
     if(verbosity){
         // printTLBTableDebug(tlb_table, 0);
         // printPageTableDebug(page_table, 0);
         // printAddress(*address, 0);
+        printAddressTable(address_table, 0);
     }
-
     return 0; 
 }
