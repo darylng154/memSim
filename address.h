@@ -9,7 +9,7 @@
 #include "options.h"
 
 typedef struct address Address;
-typedef struct addresses Addresses;
+typedef struct address_table AddressTable;
 
 struct address
 {
@@ -22,20 +22,23 @@ struct address
     uint8_t frame[MAX_FRAME_SIZE_];
 };
 
-struct addresses
+struct address_table
 {
     uint32_t num_entries;
-    Address* addresses;
+    Address* list;
 };
 
 void initAddress(Address* address);
-void initAddresses(Addresses* addresses, uint32_t length);
+void initAddressTable(AddressTable** address_table, uint32_t length);
 void printAddressFrame(const uint8_t* frame);
 void printAddress(const Address address, uint8_t printFrame);
-void printAddresses(const Addresses* addresses, uint8_t printFrame);
-uint16_t maskFileInts(const uint32_t logical_address);
+void printAddressTable(const AddressTable* address_table, uint8_t printFrame);
+void addAddress(Address* address, const uint32_t logical_address);
+void addAddressToTable(AddressTable* address_table, const uint32_t logical_address);
+void parseToAddressTable(AddressTable* address_table, const unsigned int* address_list, int length);
+uint16_t maskLogicalAddress(const uint32_t logical_address);
 uint8_t maskPageNum(const uint16_t right_most_bits);
 uint8_t maskOffset(const uint16_t right_most_bits);
-void runAlgorithm(uint16_t* right_most_bits, Algorithm algorithm);
+void runAlgorithm(AddressTable* address_table, Algorithm algorithm);
 
 #endif

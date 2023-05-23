@@ -58,16 +58,37 @@ void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid)
     list[index].valid = valid;
 }
 
-int isPageInPageTable(PageTable* page_table, uint8_t page_num)
-{
-    return 0;
-}
-
-void pageTableFIFO(PageTable* page_table, uint16_t* right_most_bits)
+// if page is in Page Table == 1, else == 0
+int isPageNumValid(PageTable* page_table, uint8_t page_num)
 {
     int i = 0;
     for(i = 0; i < page_table->num_entries; i++)
     {
-        
+        if(page_table->list[i].valid == 1)
+            return 1;
+    }
+
+    return 0;
+}
+
+void checkPageTable(AddressTable* address_table, PageTable* page_table)
+{
+    int i = 0;
+    for(i = 0; i < address_table->num_entries; i++)
+    {
+        if(isPageNumValid(page_table, address_table->list[i].page_num))
+        {
+            // page # is in PageTable => 
+            // w/ TLB: populate TLB w/ page
+            // w/o TLB: make physical address - get frame # & page_offset = frame_offset?
+            if(verbosity)
+                printf("Page %i Exists \n", address_table->list[i].page_num);
+        }
+        else
+        {
+            // get page from .bin
+            if(verbosity)
+                printf("Page %i Doesn't Exists \n", address_table->list[i].page_num);
+        }
     }
 }

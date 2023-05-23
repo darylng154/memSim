@@ -1,4 +1,5 @@
 #include "address.h"
+#include "safeutil.h"
 
 void initAddress(Address* address)
 {
@@ -16,14 +17,16 @@ void initAddress(Address* address)
     }
 }
 
-void initAddresses(Addresses* addresses, uint32_t length)
+void initAddressTable(AddressTable** address_table, uint32_t length)
 {
-    addresses->num_entries = 0;
+    *address_table = (AddressTable*) safeMalloc(sizeof(AddressTable));
+    (*address_table)->list = (Address*) safeMalloc(sizeof(Address) * length);
+    (*address_table)->num_entries = 0;
 
     int i = 0;
     for(i = 0; i < length; i++)
     {
-        initAddress(&addresses->addresses[i]);
+        initAddress(&(*address_table)->list[i]);
     }
 }
 
@@ -42,7 +45,8 @@ void printAddressFrame(const uint8_t* frame)
 
 void printAddress(const Address address, uint8_t printFrame)
 {
-    printf("address: %05x | page_num: %-3i | offset: %-3i | byte_referenced: %-3i | frame_num: %-3i ", address.address, address.page_num, address.offset, address.byte_referenced, address.frame_num);
+    printf("address: 0x%05x (%-5i) | page_num: 0x%02x (%-3i) | offset: 0x%02x (%-3i) | byte_referenced: 0x%02x (%-3i) | frame_num: 0x%02x (%-3i) ", 
+    address.address, address.address, address.page_num, address.page_num, address.offset, address.offset, address.byte_referenced, address.byte_referenced, address.frame_num, address.frame_num);
 
     if(printFrame)
         printAddressFrame(address.frame);
@@ -50,17 +54,42 @@ void printAddress(const Address address, uint8_t printFrame)
         printf("\n");
 }
 
-void printAddresses(const Addresses* addresses, uint8_t printFrame)
+void printAddressTable(const AddressTable* address_table, uint8_t printFrame)
 {
     int i = 0;
-    for(i = 0; i < addresses->num_entries; i++)
+    for(i = 0; i < address_table->num_entries; i++)
     {
-        printAddress(addresses->addresses[i], printFrame);
+        printf("AddressTable[%-3i] | ", i);
+        printAddress(address_table->list[i], printFrame);
+    }
+}
+
+void addAddress(Address* address, const uint32_t logical_address)
+{
+    uint16_t right_most_bits = maskLogicalAddress(logical_address);
+
+    address->address = logical_address;
+    address->page_num = maskPageNum(right_most_bits);
+    address->offset = maskOffset(right_most_bits);
+}
+
+void addAddressToTable(AddressTable* address_table, const uint32_t logical_address)
+{
+    addAddress(&address_table->list[address_table->num_entries], logical_address);
+    address_table->num_entries++;
+}
+
+void parseToAddressTable(AddressTable* address_table, const unsigned int* address_list, int length)
+{
+    int i = 0;
+    for(i = 0; i < length; i++)
+    {
+        addAddressToTable(address_table, address_list[i]);
     }
 }
 
 // masks the 32-bit logical address to get the 16 rightmost bits (= 8-bit page #, 2 8-bit page offset)
-uint16_t maskFileInts(const uint32_t logical_address)
+uint16_t maskLogicalAddress(const uint32_t logical_address)
 {
     uint16_t result = 0;
     uint32_t mask = 0x0000FFFF;
@@ -92,7 +121,7 @@ uint8_t maskOffset(const uint16_t right_most_bits)
     return result;
 }
 
-void runAlgorithm(uint16_t* right_most_bits, Algorithm algorithm)
+void runAlgorithm(AddressTable* address_table, Algorithm algorithm)
 {
     switch(algorithm)
     {

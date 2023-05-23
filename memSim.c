@@ -52,6 +52,15 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
     return;
 }
 
+void tempInitAddressList(Address* list, int length)
+{
+    int i = 0;
+    for(i = 0; i < length; i++)
+    {
+        initAddress(&list[i]);
+    }
+}
+
 void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
     char *buffer;
     int size, i, c;
@@ -112,8 +121,7 @@ int main(int argc, char *argv[]){
     TLBTable* tlb_table = NULL;           // TLB unit
     PageTable* page_table = NULL;         // Page Table Unit
     Address* address = NULL;
-    Addresses *addresses_info = NULL;     /* List of address struct's info*/
-
+    
     /* Get the user input from the terminal and perform checks*/
     parseOptions(argc, argv, &filename, &num_frames, &algorithm);
 
@@ -142,31 +150,15 @@ int main(int argc, char *argv[]){
     // address = safeMalloc(sizeof(Address));
     // initAddress(address);
 
-    // tables limit testing
-    // tlb_table->num_entries = 10;
-    // page_table->num_entries = 10;
-
-    // tlb_table->num_entries = MAX_TLB_SIZE_;
-    // page_table->num_entries = MAX_FRAME_SIZE_;
-
-    // uint32_t test = 0x12345678;
-    uint32_t test = 64815;
-    uint16_t right_most_bits = maskFileInts(test);
-    printf("mask right_most_bits: %0x | page #: %0x | offset: %0x \n", right_most_bits, 
-                                                                    maskPageNum(right_most_bits), 
-                                                                    maskOffset(right_most_bits));
-
-    printf("mask right_most_bits (unmodified): %0x \n", right_most_bits);
-
-    uint16_t set[3] = {0x1122, 0x2233, 0x3344};
-    runAlgorithm(set, algorithm);
+    initAddressTable(&address_table, address_count);
+    parseToAddressTable(address_table, address_list, address_count);
 
     // 0 is printDetails: for more details in later implementation
     if(verbosity){
-        printTLBTableDebug(tlb_table, 0);
-        printPageTableDebug(page_table, 0);
-        printAddress(*address, 0);
+        // printTLBTableDebug(tlb_table, 0);
+        // printPageTableDebug(page_table, 0);
+        // printAddress(*address, 0);
+        printAddressTable(address_table, 0);
     }
-
     return 0; 
 }
