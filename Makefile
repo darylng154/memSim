@@ -1,7 +1,8 @@
 .PHONY: all clean
 
 CC = gcc
-CFLAGS = -g -Wall -Werror
+CFLAGS = -g -Wall 
+#-Werror
 
 PROG   = memSim
 SRCS   = memSim.c page_table.c tlb.c safeutil.c options.c address.c
