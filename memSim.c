@@ -52,15 +52,6 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
     return;
 }
 
-void tempInitAddressList(Address* list, int length)
-{
-    int i = 0;
-    for(i = 0; i < length; i++)
-    {
-        initAddress(&list[i]);
-    }
-}
-
 void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
     char *buffer;
     int size, i, c;
@@ -95,17 +86,6 @@ void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
     
     return;
 }
-
-
-// Addresses *populateAddresses(Address *address, unsigned int *address_list, unsigned int address_count){
-//     int i;
-
-    // for(i = 0; i < address_count; i++){
-    //     addresses_info[i]. = address_count
-    // }
-
-// }
-
 
 int main(int argc, char *argv[]){
     char *filename;                       /* Name of input file*/
