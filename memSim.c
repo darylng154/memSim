@@ -104,7 +104,7 @@ int main(int argc, char *argv[]){
     Algorithm algorithm = DEFAULT_ALGO_;  /* User specified Algorithm*/
     FILE *file_ptr;                       /* Pointer to file*/
     FILE *bin_fptr;                        /* Pointer to bin*/
-    char *bin_file_path = "bin/BACKING_STORE.bin";
+    char *bin_file_path = "BACKING_STORE.bin";
     char *bin_buffer = NULL;              /* Bin buffer*/
     unsigned int bin_size = 0;            /* Size of backing store*/
     unsigned int address_count;           /* Number addresses found in file*/
