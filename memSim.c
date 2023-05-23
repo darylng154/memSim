@@ -28,7 +28,7 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
         fscanf(file_ptr, "%u", &address); /* Scan for addresses*/
         if(verbosity)
             printf("Address: %u\n", address);
-        if(address != '\n')
+        if(address != '\n' && address != EOF)
             addresses[running_count++] = address; /* Store address*/
             // running_count++; /* Increment running address counter*/
         if(running_count >= (buffer_size - 1)){ /* Need more space*/
@@ -50,15 +50,6 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
 
     free(addresses);
     return;
-}
-
-void tempInitAddressList(Address* list, int length)
-{
-    int i = 0;
-    for(i = 0; i < length; i++)
-    {
-        initAddress(&list[i]);
-    }
 }
 
 void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
@@ -96,17 +87,6 @@ void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
     return;
 }
 
-
-// Addresses *populateAddresses(Address *address, unsigned int *address_list, unsigned int address_count){
-//     int i;
-
-    // for(i = 0; i < address_count; i++){
-    //     addresses_info[i]. = address_count
-    // }
-
-// }
-
-
 int main(int argc, char *argv[]){
     char *filename;                       /* Name of input file*/
     uint8_t num_frames = MAX_FRAMES_;     /* User specified number of frames*/
@@ -120,7 +100,7 @@ int main(int argc, char *argv[]){
     unsigned int *address_list = NULL;    /* List of addresses*/
     TLBTable* tlb_table = NULL;           // TLB unit
     PageTable* page_table = NULL;         // Page Table Unit
-    Address* address = NULL;
+    AddressTable* address_table = NULL;
     
     /* Get the user input from the terminal and perform checks*/
     parseOptions(argc, argv, &filename, &num_frames, &algorithm);
@@ -131,15 +111,9 @@ int main(int argc, char *argv[]){
     fclose(file_ptr);
 
     bin_fptr = safefOpen(bin_file_path);
-    readBin(bin_fptr, &bin_buffer, &bin_size);
+    // readBin(bin_fptr, &bin_buffer, &bin_size);
 
     printf("Bin: %s", bin_buffer);
-
-    initAddresses(addresses_info, address_count);
-    addresses_info->num_entries = address_count;
-    // addresses_info->addresses   = populateAddresses(addresses_info, 
-                                                    // address_list, 
-                                                    // address_count);
 
     tlb_table = safeMalloc(sizeof(TLBTable));
     initTLBTable(tlb_table, MAX_TLB_SIZE_);
