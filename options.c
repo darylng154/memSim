@@ -17,7 +17,7 @@ void parseOptions(int argc,
                   char * const argv[], 
                   char **filename, 
                   uint8_t *num_frames, 
-                  uint8_t *algorithm)
+                  Algorithm *algorithm)
 {
     char *prog_name = argv[PROG_NAME_LOC_];
     /* Check for usage errors*/
@@ -32,6 +32,15 @@ void parseOptions(int argc,
     
     *filename = argv[FILE_NAME_LOC_];
     *num_frames = getFrameNum(argv[FRAME_NUM_LOC_]);
+    *algorithm = getAlgorithm(argv[ALGO_NUM_LOC_]);
+
+    if(verbosity){
+        printf("Filename: %s.\n", *filename);
+        printf("Number of Frames: %d.\n", (*num_frames) + 1);
+        printf("Algorithm: %d. Note FIFO = 0, LRU = 1, OPT = 2\n", *algorithm);
+    }
+
+    return;
 }
 
 
@@ -50,14 +59,48 @@ uint8_t getFrameNum(char *frame_num)
     if(!frame_num) /* Somehow frame_num string is null*/
         errorout("Set Frame Number: Empty frame_num string.\n");
     
-    ret = safeStrtol(frame_num);
-        
-    if(ret == 0 || ret > UINT8_MAX){/* Choose not to error. Use default on input error*/
-        printf("Frame Number defaulted to 256\n");
-        return DEFAULT_FRAMES_;
+    ret = safeStrtol(frame_num) - 1; /* Adjust from 1-256 to 0-255*/
+    
+    if(ret < 0 || ret > (UINT8_MAX)){/* Choose not to error. Use default on input error*/
+        printf("Frame Number defaulted to max 255\n");
+        return MAX_FRAMES_;
     } /* No valid Frame Number found*/
     
     return (uint8_t)ret;
+}
+
+
+uint8_t getAlgorithm(char *algorithm){
+    char lower_algorithm[MAX_ALGO_NAME_LEN_ + 1] = {0};
+    uint8_t ret = INVALID; /* Will default to FIFO*/
+    int i;
+    static const algo_map a_map[] = {
+        {"fifo", FIFO}, 
+        {"lru", LRU},
+        {"opt", OPT}
+    };
+    static const uint8_t num_algorithms = sizeof(a_map) / sizeof(a_map[0]);
+
+    if(!algorithm) /* Something went wrong*/
+        errorout("Get Algorithm: Empty Algorithm string.\n");
+
+    for(i = 0; i < (int)strlen(algorithm); i++) /* Remove case sensitivity*/
+         lower_algorithm[i] = tolower(algorithm[i]); /* Send to lower*/
+    
+    lower_algorithm[i] = '\0'; /* Null terminate*/
+    
+    /* Check if user input matches existing algorithm*/
+    for(i = 0; i < num_algorithms; i++) /* While not null*/
+        if(strcmp(lower_algorithm, a_map[i].algorithm_name) == 0)
+            ret = a_map[i].algorithm;
+    
+    /* Choosing not to error on input error.*/
+    if(ret == INVALID){ /* Using default on input error*/
+        printf("Algorithm defaulted to FIFO.\n");
+        return DEFAULT_ALGO_;
+    }
+
+    return ret;
 }
 
 /**
@@ -70,7 +113,7 @@ uint8_t getFrameNum(char *frame_num)
 void usage(char *prog_name)
 {
     fprintf(stderr,
-            "Usage: %s <reference-sequence-file.txt> <FRAMES> <PRA> [-v]\n",
+            "Usage: %s <reference-sequence-file.txt> <FRAMES> <PRA> [v | -v]\n",
             prog_name);
     exit(EXIT_FAILURE);
 }

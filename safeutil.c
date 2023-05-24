@@ -42,7 +42,7 @@ void *safeMalloc(size_t size){
 
 void *safeRealloc(void *ptr, size_t new_size, size_t curr_size, size_t type_size){
     void *new_ptr = NULL;
-    if((new_ptr = (void *)realloc(ptr, new_size)) == NULL) /* Check for realloc error*/
+    if((new_ptr = (void *)realloc(ptr, new_size * type_size)) == NULL) /* Check for realloc error*/
         errorout("Safe realloc failed\n");
 
     

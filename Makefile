@@ -1,22 +1,22 @@
 .PHONY: all clean
 
 CC = gcc
-CFLAGS = -g -Wall -Werror
+CFLAGS = -g -Wall 
+#-Werror
 
 PROG   = memSim
-SRCS   = memSim.c page_table.c tlb.c safeutil.c options.c
-OBJS   = memSim.o page_table.o tlb.o safeutil.o options.o
-HEADER = memSim.o page_table.h tlb.h safeutil.h options.h
+SRCS   = memSim.c page_table.c tlb.c safeutil.c options.c address.c
+OBJS   = memSim.o page_table.o tlb.o safeutil.o options.o address.o
+HEADER = memSim.o page_table.h tlb.h safeutil.h options.h address.h
 
-FRAMES = 256
+MAXFRAMES = 256
+MINFRAMES = 1
 TESTFILE = fifo1.txt
+#TESTFILE = fifoLarge.txt
 
 all:  $(PROG)
 
-#$(PROG): memSim.c ${OBJS}
-#	$(CC) $(CFLAGS) -o memSim memSim.c ${OBJS}
-
-$(PROG): ${OBJS}
+$(PROG): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 %.o : %.c
@@ -27,14 +27,53 @@ depends:
 	makedepend -Y $(SRCS)
 
 fifo: clean memSim
-	./memSim testcases/${TESTFILE} ${FRAMES} FIFO
+	./memSim testcases/$(TESTFILE) $(MAXFRAMES) FIFO -v
 
 lru: clean memSim
-	../memSim testcases/${TESTFILE} ${FRAMES} LRU
+	../memSim testcases/$(TESTFILE) $(MAXFRAMES) LRU -v
 
 opt: clean memSim
-	./memSim testcases/${TESTFILE} ${FRAMES} OPT
+	./memSim testcases/$(TESTFILE) $(MAXFRAMES) OPT -v
 
+testfails: clean memSim
+	@echo ------------- Executing $(PROG) usage test 1 -------------
+	-./$(PROG)
+	@echo
+	@echo ------------- Executing $(PROG) usage test 2 -------------
+	-./$(PROG) $(TESTFILE)
+	@echo
+	@echo ------------- Executing $(PROG) usage test 3 -------------
+	-./$(PROG) 172
+	@echo
+	@echo ------------- Executing $(PROG) usage test 4 -------------
+	-./$(PROG) LRU
+	@echo
+	@echo ------------- Executing $(PROG) usage test 5 -------------
+	-./$(PROG) $(TESTFILE) 48
+	@echo
+	@echo ------------- Executing $(PROG) usage test 6 -------------
+	-./$(PROG) $(TESTFILE) OPT
+	@echo
+	@echo ------------- Executing $(PROG) usage test 7 -------------
+	-./$(PROG) 241 FIFO
+	@echo
+
+testvalids: clean memSim
+	@echo ------------- Executing $(PROG) valid test 1 -------------
+	-./$(PROG) $(TESTFILE) 148 OPT
+	@echo
+	@echo ------------- Executing $(PROG) valid test 2 /w verbose --
+	-./$(PROG) $(TESTFILE) 222 FIFO v
+	@echo
+	@echo ------------- Executing $(PROG) valid test 4 /w verbose --
+	-./$(PROG) $(TESTFILE) 74 LRU -v
+	@echo
+	@echo ------------- Executing $(PROG) valid test 5 max frames --
+	-./$(PROG) $(TESTFILE) $(MAXFRAMES) FIFO -v
+	@echo
+	@echo ------------- Executing $(PROG) valid test 6 min frames --
+	-./$(PROG) $(TESTFILE) $(MINFRAMES) OPT -v
+	@echo
 
 clean:
 	-rm -f $(PROG)

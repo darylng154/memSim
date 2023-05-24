@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-
 #include "page_table.h"
 
 void initPage(Page* page)
@@ -13,8 +8,6 @@ void initPage(Page* page)
 
 void initPageTable(PageTable* page_table, uint16_t length)
 {
-    page_table->num_entries = 0;
-
     int i = 0;
     for(i = 0; i < length; i++)
     {
@@ -24,7 +17,7 @@ void initPageTable(PageTable* page_table, uint16_t length)
 
 void printPage(const Page page, uint8_t printDetails)
 {
-    printf("frame_num: %- 2i | valid: %i", page.frame_num, page.frame_num);
+    printf("frame_num: %- 2i | valid: %i", page.frame_num, page.valid);
 
     if(printDetails)
         printf("future stuff (set printDetails = 0 atm)");
@@ -32,21 +25,25 @@ void printPage(const Page page, uint8_t printDetails)
         printf("\n");
 }
 
-void printPageTable(const Page* list, uint16_t length, uint8_t printDetails)
+void printPageTable(const Page* list, uint8_t printDetails)
 {
     int i = 0;
-    for(i = 0; i < length; i++)
+    for(i = 0; i < MAX_FRAMES_; i++)
     {
-        printf("Page[%- 2d]: ", i);
-        printPage(list[i], printDetails);
+        if(list[i].valid)
+        {
+            printf("Page[%-3d]: ", i);
+            printPage(list[i], printDetails);
+        }
     }
 }
 
 void printPageTableDebug(const PageTable* page_table, uint8_t printDetails)
 {
     printf("\n\n#################################  Page Table  #################################\n");
-    printf("| num_entries: %i \n", page_table->num_entries);
-    printPageTable(page_table->list, page_table->num_entries, printDetails);
+    // printf("| num_entries: %i \n", page_table->num_entries);
+    // printf("| hits: %i | faults: %i \n", page_table->hits, page_table->faults);
+    printPageTable(page_table->list, printDetails);
     printf("################################################################################\n\n\n");
 }
 
@@ -61,4 +58,38 @@ void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid)
 {
     list[index].frame_num = frame_num;
     list[index].valid = valid;
+}
+
+// if page is in Page Table == 1, else == 0
+int isPageNumValid(PageTable* page_table, uint8_t page_num)
+{
+    if(page_table->list[page_num].valid == 1)
+        return 1;
+
+    return 0;
+}
+
+Seek checkPageTable(Address* address, PageTable* page_table)
+{
+    if(isPageNumValid(page_table, address->page_num))
+    {
+        // page # is in PageTable => 
+        // w/ TLB: populate TLB w/ page
+        // w/o TLB: make physical address - get frame # & page_offset = frame_offset?
+        if(verbosity)
+            printf("Page Table: Page %i Exists \n", address->page_num);
+
+        return HIT;
+    }
+    else
+    {
+        // get page from .bin . Might want to do this in the start sim function
+        //  Not sure if we should consider both the TLB and the page table misses somewhat together
+        // => no we discussed that we have to keep track of the TLB hit and miss seperate from page faults
+        // because of the output
+        if(verbosity)
+            printf("Page Table: Page %i Doesn't Exist \n", address->page_num);
+
+        return MISS;
+    }
 }
