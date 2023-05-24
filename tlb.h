@@ -14,6 +14,9 @@ struct tlb
 
 struct tlb_table
 {
+    uint32_t faults;
+    uint32_t hits;
+    
     uint8_t num_entries;
     TLB list[MAX_TLB_SIZE_];
 };

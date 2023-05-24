@@ -45,7 +45,7 @@ void printAddressFrame(const uint8_t* frame)
 
 void printAddress(const Address address, uint8_t printFrame)
 {
-    printf("address: 0x%05x (%-5i) | page_num: 0x%02x (%-3i) | offset: 0x%02x (%-3i) | byte_referenced: 0x%02x (%-3i) | frame_num: 0x%02x (%-3i) ", 
+    printf("address: 0x%04x (%-4i) | page_num: 0x%02x (%-3i) | offset: 0x%02x (%-3i) | byte_referenced: 0x%02x (%-3i) | frame_num: 0x%02x (%-3i) ", 
     address.address, address.address, address.page_num, address.page_num, address.offset, address.offset, address.byte_referenced, address.byte_referenced, address.frame_num, address.frame_num);
 
     if(printFrame)
@@ -145,4 +145,17 @@ void runAlgorithm(AddressTable* address_table, Algorithm algorithm)
             exit(EXIT_FAILURE);
             break;
     }
+}
+
+void populateFrames(AddressTable* address_table, char* bin_buffer)
+{
+    // implement reading data from bin for the specified 
+    int i = 0;
+    int index = 0;
+    for(i = 0; i < address_table->num_entries; i++)
+    {
+        address_table->list[i].frame_num = i;
+        memcpy();
+    }
+
 }

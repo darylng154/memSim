@@ -8,6 +8,9 @@ void initTLB(TLB* tlb)
 
 void initTLBTable(TLBTable* tlb_table, uint8_t length)
 {
+    tlb_table->faults = 0;
+    tlb_table->hits = 0;
+
     tlb_table->num_entries = 0;
 
     int i = 0;
@@ -40,7 +43,7 @@ void printTLBTable(const TLB* list, uint8_t length, uint8_t printDetails)
 void printTLBTableDebug(const TLBTable* tlb_table, uint8_t printDetails)
 {
     printf("\n\n#################################  TLB Table  #################################\n");
-    printf("| num_entries: %i \n", tlb_table->num_entries);
+    printf("| num_entries: %i | hits: %i | faults: %i \n", tlb_table->num_entries, tlb_table->hits, tlb_table->faults);
     printTLBTable(tlb_table->list, tlb_table->num_entries, printDetails);
     printf("###############################################################################\n\n\n");
 }

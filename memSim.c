@@ -87,6 +87,45 @@ void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
     return;
 }
 
+void runSimulator(AddressTable* address_table, TLBTable* tlb_table, PageTable* page_table)
+{
+    int i = 0;
+    for(i = 0; i < address_table->num_entries; i++)
+    {
+        checkPageTable(&address_table->list[i], page_table);
+    }
+}
+
+void printBuffer(uint8_t buffer[], int length)
+{
+    int i;
+
+    if(buffer == NULL)
+    {
+        perror("#ERROR: buffer empty!!!!");
+        exit(1);
+    }
+
+    for(i = 0; i < length; i++)
+    {
+        if(buffer[i] == '\0')
+        {
+            printf("\n\n");
+            return;
+        }
+        else if(i % 4 == 0  && i != 0)
+        {
+            printf("\n");
+
+            // if(i % 8 == 0)   // for spacing octets
+            //     printf("\n");
+        }
+
+        printf("[%02d] 0x%0X ('%c')\t", i, buffer[i], (char)buffer[i]);
+    }
+    printf("\n");
+}
+
 int main(int argc, char *argv[]){
     char *filename;                       /* Name of input file*/
     uint8_t num_frames = MAX_FRAMES_;     /* User specified number of frames*/
@@ -113,7 +152,11 @@ int main(int argc, char *argv[]){
     bin_fptr = safefOpen(bin_file_path);
     // readBin(bin_fptr, &bin_buffer, &bin_size);
 
-    printf("Bin: %s", bin_buffer);
+    if(verbosity)
+        printf("Bin: %s \n", bin_buffer);
+
+    initAddressTable(&address_table, address_count);
+    parseToAddressTable(address_table, address_list, address_count);
 
     tlb_table = safeMalloc(sizeof(TLBTable));
     initTLBTable(tlb_table, MAX_TLB_SIZE_);
@@ -121,18 +164,29 @@ int main(int argc, char *argv[]){
     page_table = safeMalloc(sizeof(PageTable));
     initPageTable(page_table, MAX_FRAME_SIZE_);
 
-    // address = safeMalloc(sizeof(Address));
-    // initAddress(address);
-
-    initAddressTable(&address_table, address_count);
-    parseToAddressTable(address_table, address_list, address_count);
-
     // 0 is printDetails: for more details in later implementation
     if(verbosity){
-        // printTLBTableDebug(tlb_table, 0);
-        // printPageTableDebug(page_table, 0);
-        // printAddress(*address, 0);
         printAddressTable(address_table, 0);
+        printTLBTableDebug(tlb_table, 0);
+        // printPageTableDebug(page_table, 0);
     }
+
+    page_table->list[66].frame_num = 5;
+    page_table->list[66].valid = 1;
+    page_table->list[71].frame_num = 5;
+    page_table->list[71].valid = 1;
+
+    runSimulator(address_table, tlb_table, page_table);
+
+    if(verbosity)
+    {
+        printPageTableDebug(page_table, 0);
+    }
+
+    free(address_table->list);
+    free(address_table);
+    free(page_table);
+    free(tlb_table);
+
     return 0; 
 }
