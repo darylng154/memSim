@@ -97,8 +97,8 @@ void runSimulator(AddressTable* address_table,
                   PageTable* page_table, 
                   Algorithm algorithm)
 {
-    Seek TLB_seek_result = MISS;
-    Seek PT_seek_result = MISS;
+    Seek TLB_seek_result = MISS; /* result of looking for page number in TLB*/
+    Seek PT_seek_result = MISS;  /* result of looking for page number in page table*/
     uint8_t resolved_frame_num;
     int i = 0;
     for(i = 0; i < address_table->num_entries; i++)

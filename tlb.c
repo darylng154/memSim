@@ -68,17 +68,21 @@ void setTLB(TLBEntry* list, uint8_t index, uint8_t page_num, uint8_t frame_num)
 
 Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_t *frame_num)
 {
-    int i;
+    int TLB_entry;
 
     /* If there are no entries in the tlb_table then it is a miss*/
     if(tlb_table->num_entries <= 0){
+        if(verbosity)
+            printf("TLB empty; Page %i Doesn't Exist \n", page_num);
         tlb_table->faults++;
         return MISS;
     }
     
-    for(i = 0; i < tlb_table->num_entries; i++){ /* Search tlb_table for page_num*/
-        if(tlb_table->list[i].page_num == page_num){
-            *frame_num = tlb_table->list[i].frame_num;
+    for(TLB_entry = 0; TLB_entry < tlb_table->num_entries; TLB_entry++){ /* Search tlb_table for page_num*/
+        if(tlb_table->list[TLB_entry].page_num == page_num){
+            if(verbosity)
+                printf("TLB: Page %i Exists\n", page_num);
+            *frame_num = tlb_table->list[TLB_entry].frame_num;
             if(algorithm == LRU)
                 ; /* Adjust queue location. Put to front of queue, like it's the newest entry*/
             else if(algorithm == OPT)
