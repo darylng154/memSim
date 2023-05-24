@@ -118,12 +118,15 @@ int main(int argc, char *argv[]){
     readBin(bin_fptr, &bin_buffer, &bin_size);
     int j;
 
+    int count = 0;
     /* For testing*/
-    // printf("BIN: \n");
-    // for(j = 0; j < bin_size / 100; j++){
-    //     printf("%x", bin_buffer[j]);
-    //     if(j % 255 == 0 && j != 0)
-    //         printf("\n");
+    printf("BIN: \n");
+    // for(j = 0; j < 1023; j++, count++){
+    //     if(count == 255){
+    //         printf("\n\n");
+    //         count = 0;
+    //     }
+    //     printf("%08x ", bin_buffer[j]);
     // }
 
     printf("\n");
