@@ -80,9 +80,9 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
     
     for(TLB_entry = 0; TLB_entry < tlb_table->num_entries; TLB_entry++){ /* Search tlb_table for page_num*/
         if(tlb_table->list[TLB_entry].page_num == page_num){
-            if(verbosity)
-                printf("TLB: Page %i Exists\n", page_num);
             *frame_num = tlb_table->list[TLB_entry].frame_num;
+            if(verbosity)
+                printf("TLB: Page %i Exists. Its mapped to %i\n", page_num, frame_num);
             if(algorithm == LRU)
                 ; /* Adjust queue location. Put to front of queue, like it's the newest entry*/
             else if(algorithm == OPT)
@@ -99,3 +99,25 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
 }
 
 
+void testCheckTLB(){
+    verbosity = 1;
+    TLBTable* tlb_table;
+    Algorithm algorithm = FIFO;
+    uint8_t page_num;
+    uint8_t *frame_num;
+
+    Seek TLB_seek_result = MISS;
+
+    tlb_table->list[0].frame_num = 0;
+    tlb_table->list[0].page_num  = 3;
+    tlb_table->list[1].frame_num = 1;
+    tlb_table->list[1].page_num  = 7;
+    tlb_table->list[2].frame_num = 2;
+    tlb_table->list[2].page_num  = 0;
+
+    /* Find frame 0*/
+    page_num = 0;
+    TLB_seek_result = checkTLB(tlb_table, FIFO, page_num, frame_num);
+    if(TLB_seek_result == MISS)
+        printf("TLB MISS: Page Number %i Not Found!\n", page_num);
+}
