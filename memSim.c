@@ -26,10 +26,11 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
     errno = 0;
     while(!feof(file_ptr)){ /* While not at EOF*/
         fscanf(file_ptr, "%u", &address); /* Scan for addresses*/
-        if(verbosity)
-            printf("Address: %u\n", address);
-        if(address != '\n' && address != EOF)
+        if(!feof(file_ptr)){
+            if(verbosity)
+                printf("Address: %u\n", address);
             addresses[running_count++] = address; /* Store address*/
+        }
             // running_count++; /* Increment running address counter*/
         if(running_count >= (buffer_size - 1)){ /* Need more space*/
             addresses = (unsigned int *)safeRealloc(addresses, buffer_size + BUFFER_, buffer_size, sizeof(unsigned int));
@@ -53,7 +54,7 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
 }
 
 void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
-    char *buffer;
+    char *buffer = NULL;
     int size, i, c;
     
     size = BIN_BUFFER_;
@@ -63,7 +64,7 @@ void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
     errno = 0;
     while(EOF != (c = fgetc(bin_fptr))){
         if(i >= size - 2){/* Reached end of buffer. Get more space*/
-            buffer = (char *)safeRealloc(bin_fptr, size + BIN_BUFFER_, size, sizeof(char));
+            buffer = (char *)safeRealloc(buffer, size + BIN_BUFFER_, size, sizeof(char));
             size += BIN_BUFFER_;
         }
         buffer[i++] = c;
@@ -78,10 +79,13 @@ void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
     }
     else
         errorout("Something went wrong with readBin.\n");
-    if(buffer) /* Shrink buffer if not NULL*/
-        buffer = (char *)safeRealloc(buffer, (i + 1), size, sizeof(char));
     
-    memcpy(bin_buffer, buffer, i + 1);
+    *bin_buffer = (char *)safeMalloc(sizeof(char) * i);
+
+    memcpy(*bin_buffer, buffer, sizeof(char) * i);
+    *bin_size = i;
+    if(verbosity)
+        printf("Bin size: %d\n", *bin_size);
     free(buffer);
     
     return;
@@ -101,7 +105,7 @@ int main(int argc, char *argv[]){
     TLBTable* tlb_table = NULL;           // TLB unit
     PageTable* page_table = NULL;         // Page Table Unit
     AddressTable* address_table = NULL;
-    
+
     /* Get the user input from the terminal and perform checks*/
     parseOptions(argc, argv, &filename, &num_frames, &algorithm);
 
@@ -111,10 +115,18 @@ int main(int argc, char *argv[]){
     fclose(file_ptr);
 
     bin_fptr = safefOpen(bin_file_path);
-    // readBin(bin_fptr, &bin_buffer, &bin_size);
+    readBin(bin_fptr, &bin_buffer, &bin_size);
+    int j;
 
-    printf("Bin: %s", bin_buffer);
+    /* For testing*/
+    // printf("BIN: \n");
+    // for(j = 0; j < bin_size / 100; j++){
+    //     printf("%x", bin_buffer[j]);
+    //     if(j % 255 == 0 && j != 0)
+    //         printf("\n");
+    // }
 
+    printf("\n");
     tlb_table = safeMalloc(sizeof(TLBTable));
     initTLBTable(tlb_table, MAX_TLB_SIZE_);
 
@@ -134,5 +146,13 @@ int main(int argc, char *argv[]){
         // printAddress(*address, 0);
         printAddressTable(address_table, 0);
     }
+
+    fclose(bin_fptr);
+    free(bin_buffer);
+    free(address_list);
+    free(tlb_table);
+    free(page_table);
+    free(address_table->list);
+    free(address_table);
     return 0; 
 }
