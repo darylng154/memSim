@@ -13,6 +13,14 @@
  * @retval : void
  * @parms  : FILE *file_ptr, unsigned int *address_list, unsigned int *num_addresses
  */
+#define BUFFER_     1024
+#define BIN_BUFFER_ 65536
+/**
+ * @fn	   : readFile
+ * @brief  : 
+ * @retval : void
+ * @parms  : FILE *file_ptr, unsigned int *address_list, unsigned int *num_addresses
+ */
 void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address_count){
     //int i;
     unsigned int address;
@@ -160,6 +168,7 @@ int main(int argc, char *argv[]){
     int count = 0;
     /* For testing*/
     if(verbosity)
+    {
         printf("BIN: \n");
     // for(j = 0; j < 1023; j++, count++){
     //     if(count == 255){
@@ -168,6 +177,11 @@ int main(int argc, char *argv[]){
     //     }
     //     printf("%08x  \n", bin_buffer[j]);
     // }
+        printf("\n");
+    }
+
+    initAddressTable(&address_table, address_count);
+    parseToAddressTable(address_table, address_list, address_count);
 
     tlb_table = safeMalloc(sizeof(TLBTable));
     initTLBTable(tlb_table, MAX_TLB_SIZE_);
@@ -197,10 +211,6 @@ int main(int argc, char *argv[]){
     fclose(bin_fptr);
     free(bin_buffer);
     free(address_list);
-    free(tlb_table);
-    free(page_table);
-    free(address_table->list);
-    free(address_table);
 
     free(address_table->list);
     free(address_table);
