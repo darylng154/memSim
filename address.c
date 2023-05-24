@@ -209,7 +209,7 @@ void populatePageData(AddressTable* address_table, char* bin_buffer)
             printBuffer(&bin_buffer[address_table->list[i].page_num * MAX_FRAME_SIZE_], 
                         MAX_FRAME_SIZE_);
 
-            printAddressTable(address_table, 1);
+            printAddressTable(address_table, 0);
         }
     }
     return;

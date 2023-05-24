@@ -103,7 +103,7 @@ void runSimulator(AddressTable* address_table,
     int i = 0;
     for(i = 0; i < address_table->num_entries; i++)
     {
-        // TLB_seek_result = checkTLB(tlb_table, algorithm, address_table->list[i].page_num, &resolved_frame_num);
+        TLB_seek_result = checkTLB(tlb_table, algorithm, address_table->list[i].page_num, &resolved_frame_num);
         if(TLB_seek_result == MISS){
             PT_seek_result = checkPageTable(&address_table->list[i], page_table);
             
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]){
 
     if(verbosity)
     {
-        printPageTableDebug(page_table, 0);
+        // printPageTableDebug(page_table, 0);
 
         // printBuffer(bin_buffer, 300);
     }
