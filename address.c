@@ -155,7 +155,7 @@ void populateFrames(AddressTable* address_table, char* bin_buffer)
     for(i = 0; i < address_table->num_entries; i++)
     {
         address_table->list[i].frame_num = i;
-        memcpy();
+        // memcpy();
     }
 
 }
