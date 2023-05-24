@@ -3,10 +3,15 @@
 
 #include "address.h"
 
-typedef struct tlb TLB;
+#define MAX_TLB_ENTRIES_ 16
+
+typedef enum {MISS = 0, HIT = 1} Seek;
+
+typedef struct tlb_entry TLBEntry;
 typedef struct tlb_table TLBTable;
 
-struct tlb
+
+struct tlb_entry
 {
     uint8_t page_num;
     uint8_t frame_num;
@@ -17,17 +22,19 @@ struct tlb_table
     uint32_t faults;
     uint32_t hits;
     
+    uint8_t max_entries;
     uint8_t num_entries;
-    TLB list[MAX_TLB_SIZE_];
+    TLBEntry list[MAX_TLB_ENTRIES_];
 };
 
-void initTLB(TLB* tlb);
-void initTLBTable(TLBTable* tlb_table, uint8_t length);
-void printTLB(const TLB tlb, uint8_t printDetails);
-void printTLBTable(const TLB* list, uint8_t length, uint8_t printDetails);
+void initTLB(TLBEntry* tlb);
+void initTLBTable(TLBTable* tlb_table, uint8_t length, uint8_t num_frames);
+void printTLB(const TLBEntry tlb, uint8_t printDetails);
+void printTLBTable(const TLBEntry* list, uint8_t length, uint8_t printDetails);
 void printTLBTableDebug(const TLBTable* tlb_table, uint8_t printDetails);
-void tlbSwap(TLB* dest, TLB* src);
-void setTLB(TLB* list, uint8_t index, uint8_t page_num, uint8_t frame_num);
+void tlbSwap(TLBEntry* dest, TLBEntry* src);
+void setTLB(TLBEntry* list, uint8_t index, uint8_t page_num, uint8_t frame_num);
+Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_t *resolved_frame_num);
 
 
 #endif

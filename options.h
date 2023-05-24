@@ -20,7 +20,6 @@
 #define MAX_ALGO_NAME_LEN_ 4
 
 #define MAX_FRAME_SIZE_ 256
-#define MAX_TLB_SIZE_ 16
 
 typedef enum {FIFO, LRU, OPT, INVALID = 255} Algorithm;
 

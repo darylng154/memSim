@@ -147,6 +147,17 @@ void runAlgorithm(AddressTable* address_table, Algorithm algorithm)
     }
 }
 
+/* I think this function is a bit confused on what we are wanting to do. 
+    Here we want to populate the frame but the frame number doesn't get set
+    until the page is added to the page table. It would seem wrong to add 
+    every address entry with a frame number as the address might not have one
+    until its it is added to the page or swapped in.
+   My thoughts are change the name of address_table's frame[] variable
+    to page_data[]. This would make sense since the page data comes from the
+    bin file and we wont have to worry about the frame_num. Plus we are using the
+    page number to parse into the bin buffer.
+    Also we might conside changing the function name to populate PageData 
+    */
 void populateFrames(AddressTable* address_table, char* bin_buffer)
 {
     // implement reading data from bin for the specified 
@@ -156,16 +167,16 @@ void populateFrames(AddressTable* address_table, char* bin_buffer)
     {
         address_table->list[i].frame_num = i;
         memcpy(address_table->list[i].frame, 
-               bin_buffer[address_table->list[i].frame_num * MAX_FRAME_SIZE_], 
+               bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_), 
                MAX_FRAME_SIZE_);
         if(verbosity){
             printf("Address frame: %u | Address Data: ",
-                   address_table->list[i].frame);
+                   address_table->list[i].frame_num);
             printBuffer(address_table->list[i].frame, MAX_FRAME_SIZE_);
             printf("Bin Data: ");
-            printBuffer(bin_buffer[address_table->list[i].frame_num * MAX_FRAME_SIZE_], 
+            printBuffer(bin_buffer[address_table->list[i].page_num * MAX_FRAME_SIZE_], 
                         MAX_FRAME_SIZE_);
         }
     }
-
+    return;
 }

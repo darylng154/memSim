@@ -2,6 +2,7 @@
 #define PAGE_TABLE_H
 
 #include "address.h"
+#include "tlb.h"
 
 typedef struct page Page;
 typedef struct page_table PageTable;
@@ -28,6 +29,6 @@ void printPageTableDebug(const PageTable* page_table, uint8_t printDetails);
 void pageSwap(Page* dest, Page* src);
 void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid);
 int isPageNumValid(PageTable* page_table, uint8_t page_num);
-void checkPageTable(Address* address, PageTable* page_table);
+Seek checkPageTable(Address* address, PageTable* page_table);
 
 #endif

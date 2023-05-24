@@ -40,5 +40,6 @@ uint16_t maskLogicalAddress(const uint32_t logical_address);
 uint8_t maskPageNum(const uint16_t right_most_bits);
 uint8_t maskOffset(const uint16_t right_most_bits);
 void runAlgorithm(AddressTable* address_table, Algorithm algorithm);
+void populateFrames(AddressTable* address_table, char* bin_buffer);
 
 #endif
