@@ -24,12 +24,15 @@ struct address
 
 struct address_table
 {
+    uint32_t page_faults;
+    
     uint32_t num_entries;
     Address* list;
 };
 
 void initAddress(Address* address);
 void initAddressTable(AddressTable** address_table, uint32_t length);
+void printBuffer(char* buffer, int length);
 void printAddressFrame(const uint8_t* frame);
 void printAddress(const Address address, uint8_t printFrame);
 void printAddressTable(const AddressTable* address_table, uint8_t printFrame);

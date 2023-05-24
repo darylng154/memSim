@@ -14,9 +14,6 @@ struct page
 
 struct page_table
 {
-    uint32_t faults;
-    uint32_t hits;
-
     Page list[MAX_FRAME_SIZE_];
 };
 

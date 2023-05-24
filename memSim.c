@@ -108,36 +108,6 @@ void runSimulator(AddressTable* address_table, TLBTable* tlb_table, PageTable* p
     }
 }
 
-void printBuffer(uint8_t buffer[], int length)
-{
-    int i;
-
-    if(buffer == NULL)
-    {
-        perror("#ERROR: buffer empty!!!!");
-        exit(1);
-    }
-
-    for(i = 0; i < length; i++)
-    {
-        if(buffer[i] == '\0')
-        {
-            printf("\n\n");
-            return;
-        }
-        else if(i % 4 == 0  && i != 0)
-        {
-            printf("\n");
-
-            // if(i % 8 == 0)   // for spacing octets
-            //     printf("\n");
-        }
-
-        printf("[%02d] 0x%0X ('%c')\t", i, buffer[i], (char)buffer[i]);
-    }
-    printf("\n");
-}
-
 int main(int argc, char *argv[]){
     char *filename;                       /* Name of input file*/
     uint8_t num_frames = MAX_FRAMES_;     /* User specified number of frames*/
@@ -206,6 +176,8 @@ int main(int argc, char *argv[]){
     if(verbosity)
     {
         printPageTableDebug(page_table, 0);
+
+        printBuffer(bin_buffer, 300);
     }
 
     fclose(bin_fptr);

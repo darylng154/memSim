@@ -30,6 +30,32 @@ void initAddressTable(AddressTable** address_table, uint32_t length)
     }
 }
 
+void printBuffer(char* buffer, int length)
+{
+    int i;
+
+    if(buffer == NULL)
+    {
+        perror("#ERROR: buffer empty!!!!");
+        exit(1);
+    }
+
+    for(i = 0; i < length; i++)
+    {
+        if(i % 32 == 0  && i != 0)
+        {
+            printf("\n");
+
+            if(i % 256 == 0)   // for spacing octets
+                printf("\n");
+        }
+
+        // printf("[%02d] 0x%0X ('%c')\t", i, buffer[i], (char)buffer[i]);
+        printf("%02X ", buffer[i]);
+    }
+    printf("\n");
+}
+
 void printAddressFrame(const uint8_t* frame)
 {
     int i = 0;
@@ -151,7 +177,7 @@ void populateFrames(AddressTable* address_table, char* bin_buffer)
 {
     // implement reading data from bin for the specified 
     int i = 0;
-    int index = 0;
+    // int index = 0;
     for(i = 0; i < address_table->num_entries; i++)
     {
         address_table->list[i].frame_num = i;
