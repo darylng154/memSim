@@ -8,9 +8,6 @@ void initPage(Page* page)
 
 void initPageTable(PageTable* page_table, uint16_t length)
 {
-    page_table->faults = 0;
-    page_table->hits = 0;
-
     int i = 0;
     for(i = 0; i < length; i++)
     {
@@ -45,7 +42,7 @@ void printPageTableDebug(const PageTable* page_table, uint8_t printDetails)
 {
     printf("\n\n#################################  Page Table  #################################\n");
     // printf("| num_entries: %i \n", page_table->num_entries);
-    printf("| hits: %i | faults: %i \n", page_table->hits, page_table->faults);
+    // printf("| hits: %i | faults: %i \n", page_table->hits, page_table->faults);
     printPageTable(page_table->list, printDetails);
     printf("################################################################################\n\n\n");
 }
@@ -82,17 +79,17 @@ Seek checkPageTable(Address* address, PageTable* page_table)
         if(verbosity)
             printf("Page Table: Page %i Exists \n", address->page_num);
 
-        page_table->hits++;
         return HIT;
     }
     else
     {
         // get page from .bin . Might want to do this in the start sim function
         //  Not sure if we should consider both the TLB and the page table misses somewhat together
+        // => no we discussed that we have to keep track of the TLB hit and miss seperate from page faults
+        // because of the output
         if(verbosity)
             printf("Page Table: Page %i Doesn't Exist \n", address->page_num);
 
-        page_table->faults++;
         return MISS;
     }
 }

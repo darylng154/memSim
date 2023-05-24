@@ -178,6 +178,9 @@ void runAlgorithm(AddressTable* address_table, Algorithm algorithm)
     until the page is added to the page table. It would seem wrong to add 
     every address entry with a frame number as the address might not have one
     until its it is added to the page or swapped in.
+
+    => yeah we need to update the code so we set the frame num when we change the page_table
+
    My thoughts are change the name of address_table's frame[] variable
     to page_data[]. This would make sense since the page data comes from the
     bin file and we wont have to worry about the frame_num. Plus we are using the
@@ -195,13 +198,17 @@ void populateFrames(AddressTable* address_table, char* bin_buffer)
         memcpy(address_table->list[i].frame, 
                bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_), 
                MAX_FRAME_SIZE_);
-        if(verbosity){
-            printf("Address frame: %u | Address Data: ",
+
+        if(verbosity)
+        {
+            printf("Address frame: %u | Address Data: \n",
                    address_table->list[i].frame_num);
             printBuffer(address_table->list[i].frame, MAX_FRAME_SIZE_);
             printf("Bin Data: ");
             printBuffer(bin_buffer[address_table->list[i].page_num * MAX_FRAME_SIZE_], 
                         MAX_FRAME_SIZE_);
+
+            printAddressTable(address_table, address_table->num_entries);
         }
     }
     return;

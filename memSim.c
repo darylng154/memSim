@@ -103,7 +103,7 @@ void runSimulator(AddressTable* address_table,
     int i = 0;
     for(i = 0; i < address_table->num_entries; i++)
     {
-        TLB_seek_result = checkTLB(tlb_table, algorithm, address_table->list[i].page_num, &resolved_frame_num);
+        // TLB_seek_result = checkTLB(tlb_table, algorithm, address_table->list[i].page_num, &resolved_frame_num);
         if(TLB_seek_result == MISS){
             PT_seek_result = checkPageTable(&address_table->list[i], page_table);
             
@@ -157,15 +157,15 @@ int main(int argc, char *argv[]){
 
     // 0 is printDetails: for more details in later implementation
     if(verbosity){
-        printAddressTable(address_table, 0);
-        printTLBTableDebug(tlb_table, 0);
+        // printAddressTable(address_table, 0);
+        // printTLBTableDebug(tlb_table, 0);
         // printPageTableDebug(page_table, 0);
     }
 
-    page_table->list[66].frame_num = 5;
-    page_table->list[66].valid = 1;
-    page_table->list[71].frame_num = 5;
-    page_table->list[71].valid = 1;
+    // page_table->list[66].frame_num = 5;
+    // page_table->list[66].valid = 1;
+    // page_table->list[71].frame_num = 5;
+    // page_table->list[71].valid = 1;
 
     runSimulator(address_table, tlb_table, page_table, algorithm);
 
@@ -173,7 +173,7 @@ int main(int argc, char *argv[]){
     {
         printPageTableDebug(page_table, 0);
 
-        printBuffer(bin_buffer, 300);
+        // printBuffer(bin_buffer, 300);
     }
 
     fclose(bin_fptr);
