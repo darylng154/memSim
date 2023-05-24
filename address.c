@@ -13,7 +13,7 @@ void initAddress(Address* address)
     int i = 0;
     for(i = 0; i < MAX_FRAME_SIZE_; i++)
     {
-        address->frame[i] = 0;
+        address->page_data[i] = 0;
     }
 }
 
@@ -56,7 +56,7 @@ void printBuffer(char* buffer, int length)
     printf("\n");
 }
 
-void printAddressFrame(const uint8_t* frame)
+void printAddressFrame(const uint8_t* page_data)
 {
     int i = 0;
     for(i = 0; i < MAX_FRAME_SIZE_; i++)
@@ -64,7 +64,7 @@ void printAddressFrame(const uint8_t* frame)
         if(i % 5 == 0)
             printf("\n");
 
-        printf("frame[%-3i]: %u | ", i, frame[i]);
+        printf("page_data[%-3i]: %u | ", i, page_data[i]);
     }
     printf("\n");
 }
@@ -75,7 +75,7 @@ void printAddress(const Address address, uint8_t printFrame)
     address.address, address.address, address.page_num, address.page_num, address.offset, address.offset, address.byte_referenced, address.byte_referenced, address.frame_num, address.frame_num);
 
     if(printFrame)
-        printAddressFrame(address.frame);
+        printAddressFrame(address.page_data);
     else
         printf("\n");
 }
@@ -174,14 +174,14 @@ void runAlgorithm(AddressTable* address_table, Algorithm algorithm)
 }
 
 /* I think this function is a bit confused on what we are wanting to do. 
-    Here we want to populate the frame but the frame number doesn't get set
+    Here we want to populate the page_data but the page_data number doesn't get set
     until the page is added to the page table. It would seem wrong to add 
-    every address entry with a frame number as the address might not have one
+    every address entry with a page_data number as the address might not have one
     until its it is added to the page or swapped in.
 
-    => yeah we need to update the code so we set the frame num when we change the page_table
+    => yeah we need to update the code so we set the page_data num when we change the page_table
 
-   My thoughts are change the name of address_table's frame[] variable
+   My thoughts are change the name of address_table's page_data[] variable
     to page_data[]. This would make sense since the page data comes from the
     bin file and we wont have to worry about the frame_num. Plus we are using the
     page number to parse into the bin buffer.
@@ -195,17 +195,17 @@ void populateFrames(AddressTable* address_table, char* bin_buffer)
     for(i = 0; i < address_table->num_entries; i++)
     {
         address_table->list[i].frame_num = i;
-        memcpy(address_table->list[i].frame, 
+        memcpy(address_table->list[i].page_data, 
                bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_), 
                MAX_FRAME_SIZE_);
 
         if(verbosity)
         {
-            printf("Address frame: %u | Address Data: \n",
+            printf("Address page_data: %u | Address Data: \n",
                    address_table->list[i].frame_num);
-            printBuffer(address_table->list[i].frame, MAX_FRAME_SIZE_);
+            printBuffer((char*)&address_table->list[i].page_data, MAX_FRAME_SIZE_);
             printf("Bin Data: ");
-            printBuffer(bin_buffer[address_table->list[i].page_num * MAX_FRAME_SIZE_], 
+            printBuffer(&bin_buffer[address_table->list[i].page_num * MAX_FRAME_SIZE_], 
                         MAX_FRAME_SIZE_);
 
             printAddressTable(address_table, address_table->num_entries);

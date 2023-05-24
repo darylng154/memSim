@@ -19,7 +19,7 @@ struct address
 
     int byte_referenced;
     uint8_t frame_num;
-    uint8_t frame[MAX_FRAME_SIZE_];
+    uint8_t page_data[MAX_FRAME_SIZE_];
 };
 
 struct address_table
