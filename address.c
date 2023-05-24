@@ -155,8 +155,17 @@ void populateFrames(AddressTable* address_table, char* bin_buffer)
     for(i = 0; i < address_table->num_entries; i++)
     {
         address_table->list[i].frame_num = i;
-        // frame_data[page_num * 256]
-        // memcpy();
+        memcpy(address_table->list[i].frame, 
+               bin_buffer[address_table->list[i].frame_num * MAX_FRAME_SIZE_], 
+               MAX_FRAME_SIZE_);
+        if(verbosity){
+            printf("Address frame: %u | Address Data: ",
+                   address_table->list[i].frame);
+            printBuffer(address_table->list[i].frame, MAX_FRAME_SIZE_);
+            printf("Bin Data: ");
+            printBuffer(bin_buffer[address_table->list[i].frame_num * MAX_FRAME_SIZE_], 
+                        MAX_FRAME_SIZE_);
+        }
     }
 
 }
