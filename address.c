@@ -56,7 +56,7 @@ void printBuffer(char* buffer, int length)
     printf("\n");
 }
 
-void printAddressFrame(const uint8_t* page_data)
+void printAddressPageData(const uint8_t* page_data)
 {
     int i = 0;
     for(i = 0; i < MAX_FRAME_SIZE_; i++)
@@ -64,18 +64,18 @@ void printAddressFrame(const uint8_t* page_data)
         if(i % 5 == 0)
             printf("\n");
 
-        printf("page_data[%-3i]: %u | ", i, page_data[i]);
+        printf("page_data[%-3i]: 0x%02x (%-3i) | ", i, page_data[i], page_data[i]);
     }
-    printf("\n");
+    printf("\n\n");
 }
 
 void printAddress(const Address address, uint8_t printFrame)
 {
-    printf("address: 0x%04x (%-4i) | page_num: 0x%02x (%-3i) | offset: 0x%02x (%-3i) | byte_referenced: 0x%02x (%-3i) | frame_num: 0x%02x (%-3i) ", 
-    address.address, address.address, address.page_num, address.page_num, address.offset, address.offset, address.byte_referenced, address.byte_referenced, address.frame_num, address.frame_num);
+    printf("address: 0x%04x (%-4i) | page_num: 0x%02x (%-3i) | offset: 0x%02x (%-3i) | frame_num: 0x%02x (%-3i)  | byte_referenced: 0x%02x (%-3i) ", 
+    address.address, address.address, address.page_num, address.page_num, address.offset, address.offset, address.frame_num, address.frame_num, address.byte_referenced, address.byte_referenced);
 
     if(printFrame)
-        printAddressFrame(address.page_data);
+        printAddressPageData(address.page_data);
     else
         printf("\n");
 }
@@ -83,11 +83,13 @@ void printAddress(const Address address, uint8_t printFrame)
 void printAddressTable(const AddressTable* address_table, uint8_t printFrame)
 {
     int i = 0;
+    printf("\n\n#################################  Address Table  #################################\n");
     for(i = 0; i < address_table->num_entries; i++)
     {
         printf("AddressTable[%-3i] | ", i);
         printAddress(address_table->list[i], printFrame);
     }
+    printf("################################################################################\n\n\n");
 }
 
 void addAddress(Address* address, const uint32_t logical_address)
@@ -194,23 +196,23 @@ void populatePageData(AddressTable* address_table, char* bin_buffer)
     // int index = 0;
     for(i = 0; i < address_table->num_entries; i++)
     {
-        address_table->list[i].frame_num = i;
         memcpy(address_table->list[i].page_data, 
                bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_), 
                MAX_FRAME_SIZE_);
 
         if(verbosity)
         {
-            printf("Address page_data: %u | Address Data: \n",
-                   address_table->list[i].frame_num);
+            printf("Page Data: \n");
+            printAddressPageData(address_table->list[i].page_data);
 
-            printBuffer((char*)&address_table->list[i].page_data, MAX_FRAME_SIZE_);
-            printf("Bin Data: ");
+            printf("Bin Data: \n");
             printBuffer(&bin_buffer[address_table->list[i].page_num * MAX_FRAME_SIZE_], 
                         MAX_FRAME_SIZE_);
-
-            printAddressTable(address_table, 0);
         }
     }
+    
+    if(verbosity)
+        printAddressTable(address_table, 1);
+
     return;
 }
