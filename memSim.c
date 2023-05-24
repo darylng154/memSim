@@ -13,14 +13,6 @@
  * @retval : void
  * @parms  : FILE *file_ptr, unsigned int *address_list, unsigned int *num_addresses
  */
-#define BUFFER_     1024
-#define BIN_BUFFER_ 65536
-/**
- * @fn	   : readFile
- * @brief  : 
- * @retval : void
- * @parms  : FILE *file_ptr, unsigned int *address_list, unsigned int *num_addresses
- */
 void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address_count){
     //int i;
     unsigned int address;
@@ -51,6 +43,7 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
 
     if(verbosity)
         printf("Total number of addresses: %u\n", running_count);
+    
     *address_count = running_count; /* Save job count*/
 
     *address_list = (unsigned int *)safeMalloc(sizeof(unsigned int) * running_count);
@@ -99,12 +92,28 @@ void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
     return;
 }
 
-void runSimulator(AddressTable* address_table, TLBTable* tlb_table, PageTable* page_table)
+void runSimulator(AddressTable* address_table, 
+                  TLBTable* tlb_table, 
+                  PageTable* page_table, 
+                  Algorithm algorithm)
 {
+    Seek TLB_seek_result = MISS; /* result of looking for page number in TLB*/
+    Seek PT_seek_result = MISS;  /* result of looking for page number in page table*/
+    uint8_t resolved_frame_num;
     int i = 0;
     for(i = 0; i < address_table->num_entries; i++)
     {
-        checkPageTable(&address_table->list[i], page_table);
+        TLB_seek_result = checkTLB(tlb_table, algorithm, address_table->list[i].page_num, &resolved_frame_num);
+        if(TLB_seek_result == MISS){
+            PT_seek_result = checkPageTable(&address_table->list[i], page_table);
+            
+
+            if(tlb_table->num_entries < tlb_table->max_entries)
+                ; /* Add page table to TLB*/
+        }
+
+        else
+            ;// do something else
     }
 }
 
@@ -133,28 +142,15 @@ int main(int argc, char *argv[]){
 
     bin_fptr = safefOpen(bin_file_path);
     readBin(bin_fptr, &bin_buffer, &bin_size);
-    int j;
-
-    int count = 0;
-    /* For testing*/
-    if(verbosity)
-    {
-        printf("BIN: \n");
-    // for(j = 0; j < 1023; j++, count++){
-    //     if(count == 255){
-    //         printf("\n\n");
-    //         count = 0;
-    //     }
-    //     printf("%08x  \n", bin_buffer[j]);
-    // }
-        printf("\n");
-    }
 
     initAddressTable(&address_table, address_count);
     parseToAddressTable(address_table, address_list, address_count);
 
+    populateFrames(address_table, bin_buffer);
+
+
     tlb_table = safeMalloc(sizeof(TLBTable));
-    initTLBTable(tlb_table, MAX_TLB_SIZE_);
+    initTLBTable(tlb_table, MAX_TLB_ENTRIES_, num_frames);
 
     page_table = safeMalloc(sizeof(PageTable));
     initPageTable(page_table, MAX_FRAME_SIZE_);
@@ -171,7 +167,7 @@ int main(int argc, char *argv[]){
     page_table->list[71].frame_num = 5;
     page_table->list[71].valid = 1;
 
-    runSimulator(address_table, tlb_table, page_table);
+    runSimulator(address_table, tlb_table, page_table, algorithm);
 
     if(verbosity)
     {

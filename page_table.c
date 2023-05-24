@@ -72,7 +72,7 @@ int isPageNumValid(PageTable* page_table, uint8_t page_num)
     return 0;
 }
 
-void checkPageTable(Address* address, PageTable* page_table)
+Seek checkPageTable(Address* address, PageTable* page_table)
 {
     if(isPageNumValid(page_table, address->page_num))
     {
@@ -80,16 +80,19 @@ void checkPageTable(Address* address, PageTable* page_table)
         // w/ TLB: populate TLB w/ page
         // w/o TLB: make physical address - get frame # & page_offset = frame_offset?
         if(verbosity)
-            printf("Page %i Exists \n", address->page_num);
+            printf("Page Table: Page %i Exists \n", address->page_num);
 
         page_table->hits++;
+        return HIT;
     }
     else
     {
-        // get page from .bin
+        // get page from .bin . Might want to do this in the start sim function
+        //  Not sure if we should consider both the TLB and the page table misses somewhat together
         if(verbosity)
-            printf("Page %i Doesn't Exists \n", address->page_num);
+            printf("Page Table: Page %i Doesn't Exist \n", address->page_num);
 
         page_table->faults++;
+        return MISS;
     }
 }
