@@ -187,7 +187,7 @@ void runAlgorithm(AddressTable* address_table, Algorithm algorithm)
     page number to parse into the bin buffer.
     Also we might conside changing the function name to populate PageData 
     */
-void populateFrames(AddressTable* address_table, char* bin_buffer)
+void populatePageData(AddressTable* address_table, char* bin_buffer)
 {
     // implement reading data from bin for the specified 
     int i = 0;
@@ -203,12 +203,13 @@ void populateFrames(AddressTable* address_table, char* bin_buffer)
         {
             printf("Address page_data: %u | Address Data: \n",
                    address_table->list[i].frame_num);
+
             printBuffer((char*)&address_table->list[i].page_data, MAX_FRAME_SIZE_);
             printf("Bin Data: ");
             printBuffer(&bin_buffer[address_table->list[i].page_num * MAX_FRAME_SIZE_], 
                         MAX_FRAME_SIZE_);
 
-            printAddressTable(address_table, address_table->num_entries);
+            printAddressTable(address_table, 1);
         }
     }
     return;

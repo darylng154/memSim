@@ -146,7 +146,7 @@ int main(int argc, char *argv[]){
     initAddressTable(&address_table, address_count);
     parseToAddressTable(address_table, address_list, address_count);
 
-    populateFrames(address_table, bin_buffer);
+    populatePageData(address_table, bin_buffer);
 
 
     tlb_table = safeMalloc(sizeof(TLBTable));
