@@ -161,7 +161,7 @@ void testCheckTLB(TLBTable* tlb_table){
 // returns 1 if TLBTable is Full, else 0
 int isTLBFull(TLBTable* tlb_table)
 {
-    if(tlb_table->num_entries <= MAX_TLB_ENTRIES_)
+    if(tlb_table->num_entries >= MAX_TLB_ENTRIES_)
         return 1;
     
     return 0;
