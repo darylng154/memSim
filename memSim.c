@@ -170,6 +170,7 @@ int main(int argc, char *argv[]){
     // page_table->list[66].valid = 1;
     // page_table->list[71].frame_num = 5;
     // page_table->list[71].valid = 1;
+    testCheckTLB(tlb_table);
 
     runSimulator(address_table, tlb_table, page_table, algorithm);
 
