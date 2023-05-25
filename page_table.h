@@ -16,7 +16,8 @@ struct page
 
 struct page_table
 {
-    // page table doesn't use this, only queue
+    // page table = current available frame (Queue is not Empty yet)
+    // queue = # entries in the queue
     uint8_t num_entries;
 
     Page list[MAX_FRAME_SIZE_];

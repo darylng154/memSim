@@ -125,7 +125,6 @@ void runSimulator(AddressTable* address_table,
                 new_tlb_entry.page_num  = seek_page_num;
                 new_tlb_entry.frame_num = resolved_frame_num;
 
-
                 // hit: 
                 // 1. populate TLB w/ page
 
@@ -134,6 +133,7 @@ void runSimulator(AddressTable* address_table,
                     addPageToTLBTable(tlb_table, new_tlb_entry);    // to
                 else
                     runTLBPRA(tlb_table, new_tlb_entry);
+
             } /* End PT Hit*/
             else /* PT Miss*/
             {
@@ -151,16 +151,29 @@ void runSimulator(AddressTable* address_table,
                     // 1. run QueuePRA
                     // 2. update page table (removed & added page)
 
-                if(!isQueueFull(queue, num_frames + 1))
+                if(!isQueueFull(queue, num_frames))
                 {
-                    resolved_frame_num = 
+                    resolved_frame_num = page_table->num_entries;
                     setPage(page_table->list, address_table->list[i].page_num, resolved_frame_num, 1);
-                    addToQueue(queue, address_table->list[i].page_num);
+                    page_table->num_entries++;
+                    
+                    // set frame num in Queue here if needed
+                    addToQueue(queue, address_table->list[i].page_num);     // move to outside of hit/miss check
+                }
+                else
+                {
+                    
+                }
+
+                if(verbosity)
+                {
+                    printf("#################################  after isQueueFull Page Table  #################################");
+                    printPageTableDebug(page_table, 0, 0);
                 }
                 
                 // 3. update TLB w/ missing page
                 new_tlb_entry.page_num  = seek_page_num;
-                new_tlb_entry.frame_num = resolved_frame_num;
+                new_tlb_entry.frame_num = page_table->list[seek_page_num].frame_num;
 
                 if(!isTLBFull(tlb_table))
                     addPageToTLBTable(tlb_table, new_tlb_entry);
@@ -230,8 +243,8 @@ int main(int argc, char *argv[]){
         printPageTableDebug(queue, 0, 1);
     }
 
-    if(verbosity)
-        testTLBPRA();
+    // if(verbosity)
+    //     testTLBPRA();
 
     runSimulator(address_table, tlb_table, page_table, queue, algorithm, num_frames);
 

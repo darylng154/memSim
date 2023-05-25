@@ -113,7 +113,7 @@ Seek checkPageTable(uint8_t page_num, PageTable* page_table, uint8_t *resolved_f
 // returns 1 if TLBTable is Full, else 0; max_entries = <FRAME>
 int isQueueFull(PageTable* queue, uint8_t num_frames)
 {
-    if(queue->num_entries < num_frames)
+    if(queue->num_entries <= num_frames)
     {
         if(verbosity)
             printf("Queue is not Full! \n");
