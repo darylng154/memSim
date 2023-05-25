@@ -10,7 +10,7 @@ void initTLB(TLBEntry* tlb)
 
 void initTLBTable(TLBTable* tlb_table, uint8_t length, uint8_t num_frames)
 {
-    tlb_table->faults = 0;
+    tlb_table->miss = 0;
     tlb_table->hits = 0;
 
     if(num_frames >= MAX_TLB_ENTRIES_) /* If there are at least 16 frames*/
@@ -29,7 +29,7 @@ void initTLBTable(TLBTable* tlb_table, uint8_t length, uint8_t num_frames)
 
 void printTLB(const TLBEntry tlb, uint8_t printDetails)
 {
-    printf("page_num: %- 2i | frame_num: %- 3i ", tlb.page_num, tlb.frame_num);
+    printf("page_num: %-3i | frame_num: %-3i ", tlb.page_num, tlb.frame_num);
 
     if(printDetails)
         printf("future stuff (set printDetails = 0 atm)");
@@ -42,7 +42,7 @@ void printTLBTable(const TLBEntry* list, uint8_t length, uint8_t printDetails)
     int i = 0;
     for(i = 0; i < length; i++)
     {
-        printf("TLBEntry[%- 2i]: ", i);
+        printf("TLBEntry[%-3i]: ", i);
         printTLB(list[i], printDetails);
     }
 }
@@ -50,7 +50,7 @@ void printTLBTable(const TLBEntry* list, uint8_t length, uint8_t printDetails)
 void printTLBTableDebug(const TLBTable* tlb_table, uint8_t printDetails)
 {
     printf("\n\n#################################  TLB Table  #################################\n");
-    printf("| num_entries: %i | max_entries: %i | hits: %i | faults: %i \n", tlb_table->num_entries, tlb_table->max_entries+1, tlb_table->hits, tlb_table->faults);
+    printf("| num_entries: %i | max_entries: %i | hits: %i | miss: %i \n", tlb_table->num_entries, tlb_table->max_entries+1, tlb_table->hits, tlb_table->miss);
     printTLBTable(tlb_table->list, tlb_table->num_entries, printDetails);
     printf("###############################################################################\n\n\n");
 }
@@ -84,7 +84,7 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
     if(tlb_table->num_entries <= 0){
         if(verbosity)
             printf("TLB empty; Page %i Doesn't Exist \n", page_num);
-        tlb_table->faults++;
+        tlb_table->miss++;
         return MISS;
     }
     
@@ -104,7 +104,7 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
         }
     }
     /* No hit*/
-    tlb_table->faults++;
+    tlb_table->miss++;
     return MISS;
 }
 
@@ -112,7 +112,7 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
 // returns 1 if TLBTable is Full, else 0
 int isTLBFull(TLBTable* tlb_table)
 {
-    if(tlb_table->num_entries < tlb_table->max_entries)
+    if(tlb_table->num_entries <= tlb_table->max_entries)
     {
         if(verbosity)
             printf("TLBTable is not Full! \n");
@@ -132,7 +132,7 @@ void runTLBPRA(TLBTable* tlb_table, const TLBEntry entry)
     static uint8_t tlb_fifo_position = 0; /* Start at 0 after TLB is full*/
     tlb_fifo_position %= tlb_table->max_entries; /* Keep between [0:max_entries]*/
     if(verbosity)
-        printf("Replacing TLB entry %i: Page %i -> %i | Frame %i -> %i.\n", tlb_fifo_position,
+        printf("Replacing TLB entry %-3i: Page %-3i -> %-3i | Frame %-3i -> %-3i.\n", tlb_fifo_position,
         tlb_table->list[tlb_fifo_position].page_num,  entry.page_num,
         tlb_table->list[tlb_fifo_position].frame_num, entry.frame_num);
     setTLB(tlb_table->list, tlb_fifo_position++, entry);
