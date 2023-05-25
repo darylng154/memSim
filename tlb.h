@@ -35,6 +35,7 @@ void printTLBTableDebug(const TLBTable* tlb_table, uint8_t printDetails);
 void tlbSwap(TLBEntry* dest, TLBEntry* src);
 void setTLB(TLBEntry* list, uint8_t index, uint8_t page_num, uint8_t frame_num);
 Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_t *resolved_frame_num);
+void testCheckTLB(TLBTable* tlb_table);
 
 
 #endif

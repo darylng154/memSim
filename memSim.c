@@ -25,23 +25,27 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
 
     errno = 0;
     while(!feof(file_ptr)){ /* While not at EOF*/
-        fscanf(file_ptr, "%u", &address); /* Scan for addresses*/
-        if(!feof(file_ptr)){
-            if(verbosity)
-                printf("Address: %u\n", address);
-            addresses[running_count++] = address; /* Store address*/
-        }
-            // running_count++; /* Increment running address counter*/
-        if(running_count >= (buffer_size - 1)){ /* Need more space*/
-            addresses = (unsigned int *)safeRealloc(addresses, buffer_size + BUFFER_, buffer_size, sizeof(unsigned int));
-            buffer_size += BUFFER_; /* Increase buffer size*/
-        }
+        address = 0; /* Clear address*/
+        if(fscanf(file_ptr, "%u", &address) == 1){
+            if(!feof(file_ptr) || address != 0){
+                if(verbosity)
+                    printf("Address: %u\n", address);
+                addresses[running_count++] = address; /* Store address*/
+            }
+                // running_count++; /* Increment running address counter*/
+            if(running_count >= (buffer_size - 1)){ /* Need more space*/
+                addresses = (unsigned int *)safeRealloc(addresses, buffer_size + BUFFER_, buffer_size, sizeof(unsigned int));
+                buffer_size += BUFFER_; /* Increase buffer size*/
+            }
+        } /* Scan for addresses*/
+        else if(!feof(file_ptr))
+            errorout("readFile failed. Something in address file is not an ASCII integer\n");
     }
     
     if(errno) /* Something went wrong*/
         errorout("ReadFile failed.\n");
 
-    if(verbosity)
+    // if(verbosity)
         printf("Total number of addresses: %u\n", running_count);
     
     *address_count = running_count; /* Save job count*/
@@ -185,6 +189,7 @@ int main(int argc, char *argv[]){
     // page_table->list[66].valid = 1;
     // page_table->list[71].frame_num = 5;
     // page_table->list[71].valid = 1;
+    testCheckTLB(tlb_table);
 
     runSimulator(address_table, tlb_table, page_table, queue, algorithm);
 
