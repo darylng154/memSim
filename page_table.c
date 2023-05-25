@@ -120,7 +120,7 @@ int isQueueFull(PageTable* queue, uint8_t num_frames)
     return 1;
 }
 
-// inject to front(queue[0]) based on Algorithm
+// inject to front(queue[0] = MRU) based on Algorithm
 void addToQueue(PageTable* queue, uint8_t page_num)
 {
     int i = 0;
