@@ -143,6 +143,20 @@ void runSimulator(AddressTable* address_table,
                 
                 // 2. make missing page valid
                 // Need to get the frame number and store it in resolved_frame_num. or Here
+                    // if Queue is not full: 
+                    // 1. validate page_num in page table
+                    // 2. addtoQueue(): inject to front(queue[0]) based on Algorithm
+
+                    // else if is full:
+                    // 1. run QueuePRA
+                    // 2. update page table (removed & added page)
+
+                if(!isQueueFull(queue, num_frames + 1))
+                {
+                    resolved_frame_num = 
+                    setPage(page_table->list, address_table->list[i].page_num, resolved_frame_num, 1);
+                    addToQueue(queue, address_table->list[i].page_num);
+                }
                 
                 // 3. update TLB w/ missing page
                 new_tlb_entry.page_num  = seek_page_num;
@@ -153,19 +167,6 @@ void runSimulator(AddressTable* address_table,
                 else
                     runTLBPRA(tlb_table, new_tlb_entry);
 
-                // if Queue is not full: 
-                // 1. validate page_num in page table
-                // 2. addtoQueue(): inject to front(queue[0]) based on Algorithm
-
-                // else if is full:
-                // 1. run QueuePRA
-                // 2. update page table (removed & added page)
-
-                if(!isQueueFull(queue, num_frames + 1))
-                {
-                    setPage(page_table->list, address_table->list[i].page_num, resolved_frame_num, 1);
-                    addToQueue(queue, address_table->list[i].page_num);
-                }
                 // else
                 //     runQueuePRA();
             }/* End PT Miss*/
