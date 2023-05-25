@@ -161,7 +161,7 @@ int main(int argc, char *argv[]){
 
     // 0 is printDetails: for more details in later implementation
     if(verbosity){
-        // printAddressTable(address_table, 0);
+        printAddressTable(address_table, 0);
         // printTLBTableDebug(tlb_table, 0);
         // printPageTableDebug(page_table, 0);
     }
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]){
     {
         // printPageTableDebug(page_table, 0);
 
-        // printBuffer(bin_buffer, 300);
+        printBuffer(bin_buffer, 256*3);
     }
 
     fclose(bin_fptr);

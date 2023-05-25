@@ -42,16 +42,19 @@ void printBuffer(char* buffer, int length)
 
     for(i = 0; i < length; i++)
     {
-        if(i % 32 == 0  && i != 0)
+        if(i % 8 == 0 && i != 0)
         {
-            printf("\n");
+            printf("|");
 
+            if(i % 32 == 0)   // for spacing octets
+                printf("\n");
             if(i % 256 == 0)   // for spacing octets
                 printf("\n");
         }
 
         // printf("[%02d] 0x%0X ('%c')\t", i, buffer[i], (char)buffer[i]);
         printf("%02X ", (uint8_t)buffer[i]);
+
     }
     printf("\n");
 }
@@ -61,10 +64,10 @@ void printAddressPageData(const uint8_t* page_data)
     int i = 0;
     for(i = 0; i < MAX_FRAME_SIZE_; i++)
     {
-        if(i % 5 == 0)
+        if(i % 4 == 0)
             printf("\n");
 
-        printf("page_data[%-3i]: 0x%02x (%-3i) | ", i, page_data[i], page_data[i]);
+        printf("page_data[%-3i]: 0x%02X (%-3i) | ", i, page_data[i], page_data[i]);
     }
     printf("\n\n");
 }
@@ -202,17 +205,18 @@ void populatePageData(AddressTable* address_table, char* bin_buffer)
 
         if(verbosity)
         {
-            printf("Page Data: \n");
-            printAddressPageData(address_table->list[i].page_data);
+            // checking if memcpy is correct => yes
+            // printf("Page Data: \n");
+            // printAddressPageData(address_table->list[i].page_data);
 
-            printf("Bin Data: \n");
-            printBuffer(&bin_buffer[address_table->list[i].page_num * MAX_FRAME_SIZE_], 
-                        MAX_FRAME_SIZE_);
+            // printf("Bin Data: \n");
+            // printBuffer((bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_)), 
+            //             MAX_FRAME_SIZE_);
         }
     }
     
-    if(verbosity)
-        printAddressTable(address_table, 1);
+    // if(verbosity)
+    //     printAddressTable(address_table, 1);
 
     return;
 }
