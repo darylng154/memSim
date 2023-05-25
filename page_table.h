@@ -34,7 +34,7 @@ int isPageNumValid(PageTable* page_table, uint8_t page_num);
 Seek checkPageTable(Address* address, PageTable* page_table);
 // returns 1 if TLBTable is Full, else 0; max_entries = <FRAME>
 int isQueueFull(PageTable* queue, uint8_t max_entries);
-// inject to front(queue[0]) based on Algorithm
+// inject to front(queue[0] = MRU) based on Algorithm
 void addToQueue(PageTable* queue, uint8_t page_num);
 
 #endif
