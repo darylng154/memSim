@@ -49,7 +49,7 @@ void printTLBTable(const TLBEntry* list, uint8_t length, uint8_t printDetails)
 void printTLBTableDebug(const TLBTable* tlb_table, uint8_t printDetails)
 {
     printf("\n\n#################################  TLB Table  #################################\n");
-    printf("| num_entries: %i | hits: %i | faults: %i \n", tlb_table->num_entries, tlb_table->hits, tlb_table->faults);
+    printf("| num_entries: %i | max_entries: %i | hits: %i | faults: %i \n", tlb_table->num_entries, tlb_table->max_entries+1, tlb_table->hits, tlb_table->faults);
     printTLBTable(tlb_table->list, tlb_table->num_entries, printDetails);
     printf("###############################################################################\n\n\n");
 }
@@ -162,10 +162,18 @@ void testCheckTLB(TLBTable* tlb_table){
 // returns 1 if TLBTable is Full, else 0
 int isTLBFull(TLBTable* tlb_table)
 {
-    if(tlb_table->num_entries >= MAX_TLB_ENTRIES_)
-        return 1;
+    if(tlb_table->num_entries < tlb_table->max_entries)
+    {
+        if(verbosity)
+            printf("TLBTable is not Full! \n");
+
+        return 0;
+    }
+
+    if(verbosity)
+        printf("TLBTable is Full! | num_entries: %i \n", tlb_table->num_entries);
     
-    return 0;
+    return 1;
 }
 
 // run the page replacement algorithm for the TLB
