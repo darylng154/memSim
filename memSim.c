@@ -113,23 +113,32 @@ void runSimulator(AddressTable* address_table,
         if(TLB_seek_result == MISS){
             PT_seek_result = checkPageTable(&address_table->list[i], page_table);
             
-            if(PT_seek_result == MISS);
+            if(PT_seek_result == HIT)
+            {
+                // hit: 
+                // 1. put into Queue using Algorithm
+                // 2. increment page hit
+                // 3. populate TLB w/ page
+
+
+                if(!isTLBFull(tlb_table))
+                    addPageToTLBTable(tlb_table, address_table->list[i].page_num, 0);    // 
+                // else
+                //     runPRA();
+            }
+            else
+            {
                 // miss: 
                 // 1. get from "bin" (not necessary)
-                // 2. update TLB w/ missing page
-                // 3. put into Queue using Algorithm
-                // 4. check for page fault
-            else;
-                // hit: 
-                // 1. populate TLB w/ page
                 // 2. put into Queue using Algorithm
-                // 3. increment page hit
+                // 3. check for page fault
+                // 4. update TLB w/ missing page
 
-
+            }
+                
                 // if(tlb_table->num_entries < tlb_table->max_entries)
                 //     ; /* Add page table to TLB*/
         }
-
         else
             ;// do something else
     }
@@ -179,23 +188,22 @@ int main(int argc, char *argv[]){
 
     // 0 is printDetails: for more details in later implementation
     if(verbosity){
+        printAddressTable(address_table, 0);
+        printTLBTableDebug(tlb_table, 0);
+        printPageTableDebug(page_table, 0, 0);
+        printPageTableDebug(queue, 0, 1);
+    }
+
+    runSimulator(address_table, tlb_table, page_table, queue, algorithm);
+
+
+    // for double checking tables / bin
+    if(verbosity)
+    {
         // printAddressTable(address_table, 0);
         // printTLBTableDebug(tlb_table, 0);
         // printPageTableDebug(page_table, 0, 0);
         // printPageTableDebug(queue, 0, 1);
-    }
-
-    // page_table->list[66].frame_num = 5;
-    // page_table->list[66].valid = 1;
-    // page_table->list[71].frame_num = 5;
-    // page_table->list[71].valid = 1;
-    testCheckTLB(tlb_table);
-
-    runSimulator(address_table, tlb_table, page_table, queue, algorithm);
-
-    if(verbosity)
-    {
-        // printPageTableDebug(page_table, 0);
         // printBuffer(bin_buffer, 256*3);
     }
 

@@ -66,6 +66,12 @@ void setTLB(TLBEntry* list, uint8_t index, uint8_t page_num, uint8_t frame_num)
     list[index].frame_num = frame_num;
 }
 
+void addPageToTLBTable(TLBTable* tlb_table, uint8_t page_num, uint8_t frame_num)
+{
+    setTLB(tlb_table->list, tlb_table->num_entries, page_num, frame_num);
+    tlb_table->num_entries++;
+}
+
 Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_t *frame_num)
 {
     int TLB_entry;
@@ -150,4 +156,19 @@ void testCheckTLB(TLBTable* tlb_table){
     else
         printf("TLB HIT: Page Number %i Found!\n", page_num);
     return;
+}
+
+// returns 1 if TLBTable is Full, else 0
+int isTLBFull(TLBTable* tlb_table)
+{
+    if(tlb_table->num_entries <= MAX_TLB_ENTRIES_)
+        return 1;
+    
+    return 0;
+}
+
+// run the page replacement algorithm
+void runPRA(TLBTable* tlb_table, const TLBEntry entry)
+{
+
 }

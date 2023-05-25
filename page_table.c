@@ -42,12 +42,14 @@ void printPageTable(const Page* list, uint8_t printDetails)
 
 void printPageTableDebug(const PageTable* page_table, uint8_t printDetails, uint8_t printQueue)
 {
-    printf("\n\n#################################  Page Table  #################################\n");
     if(printQueue)
     {
+        printf("\n\n#################################  Queue Table  #################################\n");
         printf("| num_entries: %i \n", page_table->num_entries);
         // printf("| hits: %i | faults: %i \n", page_table->hits, page_table->faults);
     }
+    else
+        printf("\n\n#################################  Page Table  #################################\n");
     printPageTable(page_table->list, printDetails);
     printf("################################################################################\n\n\n");
 }

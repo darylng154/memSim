@@ -28,6 +28,7 @@ void printPageTable(const Page* list, uint8_t printDetails);
 void printPageTableDebug(const PageTable* page_table, uint8_t printDetails, uint8_t printQueue);
 void pageSwap(Page* dest, Page* src);
 void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid);
+// if page is in Page Table == 1, else == 0
 int isPageNumValid(PageTable* page_table, uint8_t page_num);
 Seek checkPageTable(Address* address, PageTable* page_table);
 

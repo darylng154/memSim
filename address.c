@@ -152,6 +152,7 @@ uint8_t maskOffset(const uint16_t right_most_bits)
     return result;
 }
 
+// prob don't need this
 void runAlgorithm(AddressTable* address_table, Algorithm algorithm)
 {
     switch(algorithm)

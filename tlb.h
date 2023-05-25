@@ -34,8 +34,13 @@ void printTLBTable(const TLBEntry* list, uint8_t length, uint8_t printDetails);
 void printTLBTableDebug(const TLBTable* tlb_table, uint8_t printDetails);
 void tlbSwap(TLBEntry* dest, TLBEntry* src);
 void setTLB(TLBEntry* list, uint8_t index, uint8_t page_num, uint8_t frame_num);
+void addPageToTLBTable(TLBTable* tlb_table, uint8_t page_num, uint8_t frame_num);
 Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_t *resolved_frame_num);
 void testCheckTLB(TLBTable* tlb_table);
+// returns 1 if TLBTable is Full, else 0
+int isTLBFull(TLBTable* tlb_table);
+// run the page replacement algorithm
+void runPRA(TLBTable* tlb_table, const TLBEntry entry);
 
 
 #endif
