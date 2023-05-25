@@ -105,6 +105,7 @@ void runSimulator(AddressTable* address_table,
     Seek TLB_seek_result = MISS; /* result of looking for page number in TLB*/
     Seek PT_seek_result = MISS;  /* result of looking for page number in page table*/
     uint8_t resolved_frame_num;
+    TLBEntry new_tlb_entry;
     int i = 0;
     for(i = 0; i < address_table->num_entries; i++)
     {
@@ -115,6 +116,10 @@ void runSimulator(AddressTable* address_table,
             
             if(PT_seek_result == HIT)
             {
+                new_tlb_entry.page_num  = address_table->list[i].page_num;
+                new_tlb_entry.frame_num = address_table->list[i].page_num;
+
+
                 // hit: 
                 // 1. put into Queue using Algorithm
                 // 2. increment page hit
@@ -124,8 +129,8 @@ void runSimulator(AddressTable* address_table,
 
                 if(!isTLBFull(tlb_table))
                     addPageToTLBTable(tlb_table, address_table->list[i].page_num, 0);    // get frame # after putting into Queue
-                // else
-                //     runPRA();
+                else
+                    runTLBPRA(tlb_table, address_table->list[i]);
             }
             else
             {

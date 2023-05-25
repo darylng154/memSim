@@ -1,4 +1,5 @@
 #include "tlb.h"
+#include "page_table.h"
 
 void initTLB(TLBEntry* tlb)
 {
@@ -85,16 +86,16 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
     }
     
     for(TLB_entry = 0; TLB_entry < tlb_table->num_entries; TLB_entry++){ /* Search tlb_table for page_num*/
-        if(tlb_table->list[TLB_entry].page_num == page_num){
+        if(tlb_table->list[TLB_entry].page_num == page_num){ /* Entry found*/
             *frame_num = tlb_table->list[TLB_entry].frame_num;
             if(verbosity)
                 printf("TLB: Page %i Exists. Its mapped to frame %i\n", page_num, *frame_num);
-            if(algorithm == LRU)
-                ; /* Adjust queue location. Put to front of queue, like it's the newest entry*/
-            else if(algorithm == OPT)
-                ; /* Do magic*/
-            else /* FIFO*/
-                ; /* Do nothing*/
+            // if(algorithm == LRU)
+            //     ; /* Adjust queue location. Put to front of queue, like it's the newest entry*/
+            // else if(algorithm == OPT)
+            //     ; /* Do magic*/
+            // else /* FIFO*/
+            //     ; /* Do nothing*/
             tlb_table->hits++; /* Page was found*/
             return HIT;
         }
@@ -167,8 +168,8 @@ int isTLBFull(TLBTable* tlb_table)
     return 0;
 }
 
-// run the page replacement algorithm
-void runTLBPRA(TLBTable* tlb_table, const TLBEntry entry)
+// run the page replacement algorithm for the TLB
+void runTLBPRA(TLBTable* tlb_table, uint8_t frame_num, uint8_t )
 {
 
 }
