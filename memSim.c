@@ -95,6 +95,7 @@ void readBin(FILE *bin_fptr, char **bin_buffer, unsigned int *bin_size){
 void runSimulator(AddressTable* address_table, 
                   TLBTable* tlb_table, 
                   PageTable* page_table, 
+                  PageTable* queue,
                   Algorithm algorithm)
 {
     Seek TLB_seek_result = MISS; /* result of looking for page number in TLB*/
@@ -104,12 +105,25 @@ void runSimulator(AddressTable* address_table,
     for(i = 0; i < address_table->num_entries; i++)
     {
         TLB_seek_result = checkTLB(tlb_table, algorithm, address_table->list[i].page_num, &resolved_frame_num);
+        
         if(TLB_seek_result == MISS){
             PT_seek_result = checkPageTable(&address_table->list[i], page_table);
             
+            if(PT_seek_result == MISS);
+                // miss: 
+                // 1. get from "bin" (not necessary)
+                // 2. update TLB w/ missing page
+                // 3. put into Queue using Algorithm
+                // 4. check for page fault
+            else;
+                // hit: 
+                // 1. populate TLB w/ page
+                // 2. put into Queue using Algorithm
+                // 3. increment page hit
 
-            if(tlb_table->num_entries < tlb_table->max_entries)
-                ; /* Add page table to TLB*/
+
+                // if(tlb_table->num_entries < tlb_table->max_entries)
+                //     ; /* Add page table to TLB*/
         }
 
         else
@@ -118,19 +132,20 @@ void runSimulator(AddressTable* address_table,
 }
 
 int main(int argc, char *argv[]){
-    char *filename;                       /* Name of input file*/
-    uint8_t num_frames = MAX_FRAMES_;     /* User specified number of frames*/
-    Algorithm algorithm = DEFAULT_ALGO_;  /* User specified Algorithm*/
-    FILE *file_ptr;                       /* Pointer to file*/
-    FILE *bin_fptr;                        /* Pointer to bin*/
+    char *filename;                         /* Name of input file*/
+    uint8_t num_frames = MAX_FRAMES_;       /* User specified number of frames*/
+    Algorithm algorithm = DEFAULT_ALGO_;    /* User specified Algorithm*/
+    FILE *file_ptr;                         /* Pointer to file*/
+    FILE *bin_fptr;                         /* Pointer to bin*/
     char *bin_file_path = "BACKING_STORE.bin";
-    char *bin_buffer = NULL;              /* Bin buffer*/
-    unsigned int bin_size = 0;            /* Size of backing store*/
-    unsigned int address_count;           /* Number addresses found in file*/
-    unsigned int *address_list = NULL;    /* List of addresses*/
-    TLBTable* tlb_table = NULL;           // TLB unit
-    PageTable* page_table = NULL;         // Page Table Unit
-    AddressTable* address_table = NULL;
+    char *bin_buffer = NULL;                /* Bin buffer*/
+    unsigned int bin_size = 0;              /* Size of backing store*/
+    unsigned int address_count;             /* Number addresses found in file*/
+    unsigned int *address_list = NULL;      /* List of addresses*/
+    TLBTable* tlb_table = NULL;             // TLB unit
+    PageTable* page_table = NULL;           // Page Table Unit
+    AddressTable* address_table = NULL;     // Holds output data for all Address in input.txt
+    PageTable* queue = NULL;                // Queue 
 
     /* Get the user input from the terminal and perform checks*/
     parseOptions(argc, argv, &filename, &num_frames, &algorithm);
@@ -155,11 +170,15 @@ int main(int argc, char *argv[]){
     page_table = safeMalloc(sizeof(PageTable));
     initPageTable(page_table, MAX_FRAME_SIZE_);
 
+    queue = safeMalloc(sizeof(PageTable));
+    initPageTable(queue, MAX_FRAME_SIZE_);
+
     // 0 is printDetails: for more details in later implementation
     if(verbosity){
-        printAddressTable(address_table, 0);
+        // printAddressTable(address_table, 0);
         // printTLBTableDebug(tlb_table, 0);
-        // printPageTableDebug(page_table, 0);
+        // printPageTableDebug(page_table, 0, 0);
+        // printPageTableDebug(queue, 0, 1);
     }
 
     // page_table->list[66].frame_num = 5;
@@ -167,13 +186,12 @@ int main(int argc, char *argv[]){
     // page_table->list[71].frame_num = 5;
     // page_table->list[71].valid = 1;
 
-    runSimulator(address_table, tlb_table, page_table, algorithm);
+    runSimulator(address_table, tlb_table, page_table, queue, algorithm);
 
     if(verbosity)
     {
         // printPageTableDebug(page_table, 0);
-
-        printBuffer(bin_buffer, 256*3);
+        // printBuffer(bin_buffer, 256*3);
     }
 
     fclose(bin_fptr);

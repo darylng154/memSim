@@ -8,6 +8,8 @@ void initPage(Page* page)
 
 void initPageTable(PageTable* page_table, uint16_t length)
 {
+    page_table->num_entries = 0;
+
     int i = 0;
     for(i = 0; i < length; i++)
     {
@@ -38,11 +40,14 @@ void printPageTable(const Page* list, uint8_t printDetails)
     }
 }
 
-void printPageTableDebug(const PageTable* page_table, uint8_t printDetails)
+void printPageTableDebug(const PageTable* page_table, uint8_t printDetails, uint8_t printQueue)
 {
     printf("\n\n#################################  Page Table  #################################\n");
-    // printf("| num_entries: %i \n", page_table->num_entries);
-    // printf("| hits: %i | faults: %i \n", page_table->hits, page_table->faults);
+    if(printQueue)
+    {
+        printf("| num_entries: %i \n", page_table->num_entries);
+        // printf("| hits: %i | faults: %i \n", page_table->hits, page_table->faults);
+    }
     printPageTable(page_table->list, printDetails);
     printf("################################################################################\n\n\n");
 }
@@ -74,8 +79,7 @@ Seek checkPageTable(Address* address, PageTable* page_table)
     if(isPageNumValid(page_table, address->page_num))
     {
         // page # is in PageTable => 
-        // w/ TLB: populate TLB w/ page
-        // w/o TLB: make physical address - get frame # & page_offset = frame_offset?
+        // hit: populate TLB w/ page & put into RAM
         if(verbosity)
             printf("Page Table: Page %i Exists \n", address->page_num);
 

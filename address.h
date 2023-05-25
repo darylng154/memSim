@@ -33,7 +33,7 @@ struct address_table
 void initAddress(Address* address);
 void initAddressTable(AddressTable** address_table, uint32_t length);
 void printBuffer(char* buffer, int length);
-void printAddressPageData(const uint8_t* frame);
+void printAddressPageData(const uint8_t* page_data, int length);
 void printAddress(const Address address, uint8_t printFrame);
 void printAddressTable(const AddressTable* address_table, uint8_t printFrame);
 void addAddress(Address* address, const uint32_t logical_address);

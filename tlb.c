@@ -82,7 +82,7 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
         if(tlb_table->list[TLB_entry].page_num == page_num){
             *frame_num = tlb_table->list[TLB_entry].frame_num;
             if(verbosity)
-                printf("TLB: Page %i Exists. Its mapped to %i\n", page_num, frame_num);
+                printf("TLB: Page %u Exists. Its mapped to %u\n", page_num, frame_num);
             if(algorithm == LRU)
                 ; /* Adjust queue location. Put to front of queue, like it's the newest entry*/
             else if(algorithm == OPT)

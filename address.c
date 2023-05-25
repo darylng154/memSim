@@ -59,10 +59,10 @@ void printBuffer(char* buffer, int length)
     printf("\n");
 }
 
-void printAddressPageData(const uint8_t* page_data)
+void printAddressPageData(const uint8_t* page_data, int length)
 {
     int i = 0;
-    for(i = 0; i < MAX_FRAME_SIZE_; i++)
+    for(i = 0; i < length; i++)
     {
         if(i % 4 == 0)
             printf("\n");
@@ -78,7 +78,7 @@ void printAddress(const Address address, uint8_t printFrame)
     address.address, address.address, address.page_num, address.page_num, address.offset, address.offset, address.frame_num, address.frame_num, address.byte_referenced, address.byte_referenced);
 
     if(printFrame)
-        printAddressPageData(address.page_data);
+        printAddressPageData(address.page_data, MAX_FRAME_SIZE_);
     else
         printf("\n");
 }
@@ -199,24 +199,30 @@ void populatePageData(AddressTable* address_table, char* bin_buffer)
     // int index = 0;
     for(i = 0; i < address_table->num_entries; i++)
     {
+        // page data
         memcpy(address_table->list[i].page_data, 
                bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_), 
                MAX_FRAME_SIZE_);
 
+        // byte referenced
+        memcpy(&address_table->list[i].byte_referenced, 
+               bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_) + address_table->list[i].offset, 
+               1);
+
         if(verbosity)
         {
-            // checking if memcpy is correct => yes
+            // checking if memcpys is correct => yes
             // printf("Page Data: \n");
-            // printAddressPageData(address_table->list[i].page_data);
+            // printAddressPageData(address_table->list[i].page_data, MAX_FRAME_SIZE_);
 
             // printf("Bin Data: \n");
             // printBuffer((bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_)), 
             //             MAX_FRAME_SIZE_);
         }
     }
-    
+
     // if(verbosity)
-    //     printAddressTable(address_table, 1);
+        // printAddressTable(address_table, 0);
 
     return;
 }
