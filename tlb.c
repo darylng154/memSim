@@ -1,4 +1,6 @@
 #include "tlb.h"
+#include "page_table.h"
+#include "safeutil.h"
 
 void initTLB(TLBEntry* tlb)
 {
@@ -60,15 +62,17 @@ void tlbSwap(TLBEntry* dest, TLBEntry* src)
     *src = temp;
 }
 
-void setTLB(TLBEntry* list, uint8_t index, uint8_t page_num, uint8_t frame_num)
+// void setTLB(TLBEntry* list, uint8_t index, uint8_t page_num, uint8_t frame_num) // Changed from
+void setTLB(TLBEntry* list, uint8_t index, const TLBEntry tlb_entry)    // to
 {
-    list[index].page_num = page_num;
-    list[index].frame_num = frame_num;
+    list[index].page_num = tlb_entry.page_num;
+    list[index].frame_num = tlb_entry.frame_num;
 }
 
-void addPageToTLBTable(TLBTable* tlb_table, uint8_t page_num, uint8_t frame_num)
+// void addPageToTLBTable(TLBTable* tlb_table, uint8_t page_num, uint8_t frame_num) // Changed from
+void addPageToTLBTable(TLBTable* tlb_table, const TLBEntry tlb_entry) // Changed to
 {
-    setTLB(tlb_table->list, tlb_table->num_entries, page_num, frame_num);
+    setTLB(tlb_table->list, tlb_table->num_entries, tlb_entry);
     tlb_table->num_entries++;
 }
 
@@ -85,16 +89,16 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
     }
     
     for(TLB_entry = 0; TLB_entry < tlb_table->num_entries; TLB_entry++){ /* Search tlb_table for page_num*/
-        if(tlb_table->list[TLB_entry].page_num == page_num){
+        if(tlb_table->list[TLB_entry].page_num == page_num){ /* Entry found*/
             *frame_num = tlb_table->list[TLB_entry].frame_num;
             if(verbosity)
                 printf("TLB: Page %i Exists. Its mapped to frame %i\n", page_num, *frame_num);
-            if(algorithm == LRU)
-                ; /* Adjust queue location. Put to front of queue, like it's the newest entry*/
-            else if(algorithm == OPT)
-                ; /* Do magic*/
-            else /* FIFO*/
-                ; /* Do nothing*/
+            // if(algorithm == LRU)
+            //     ; /* Adjust queue location. Put to front of queue, like it's the newest entry*/
+            // else if(algorithm == OPT)
+            //     ; /* Do magic*/
+            // else /* FIFO*/
+            //     ; /* Do nothing*/
             tlb_table->hits++; /* Page was found*/
             return HIT;
         }
@@ -104,59 +108,6 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
     return MISS;
 }
 
-
-void testCheckTLB(TLBTable* tlb_table){
-    verbosity = 1;
-    // TLBTable* tlb_table;
-    Algorithm algorithm = FIFO;
-    uint8_t page_num;
-    uint8_t *frame_num;
-
-    Seek TLB_seek_result = MISS;
-
-    tlb_table->list[0].frame_num = 0;
-    tlb_table->list[0].page_num  = 3;
-    tlb_table->num_entries++;
-    tlb_table->list[1].frame_num = 1;
-    tlb_table->list[1].page_num  = 7;
-    tlb_table->num_entries++;
-    tlb_table->list[2].frame_num = 2;
-    tlb_table->list[2].page_num  = 0;
-    tlb_table->num_entries++;
-    
-    /* Find frame 0. Should HIT*/
-    page_num = 3;
-    TLB_seek_result = checkTLB(tlb_table, FIFO, page_num, frame_num);
-    if(TLB_seek_result == MISS)
-        printf("TLB MISS: Page Number %i Not Found!\n", page_num);
-    else
-        printf("TLB HIT: Page Number %i Found!\n", page_num);
-    
-    /* Find frame 1. Should HIT*/
-    page_num = 7;
-    TLB_seek_result = checkTLB(tlb_table, FIFO, page_num, frame_num);
-    if(TLB_seek_result == MISS)
-        printf("TLB MISS: Page Number %i Not Found!\n", page_num);
-    else
-        printf("TLB HIT: Page Number %i Found!\n", page_num);
-
-    /* Find frame 2. Should HIT*/
-    page_num = 0;
-    TLB_seek_result = checkTLB(tlb_table, FIFO, page_num, frame_num);
-    if(TLB_seek_result == MISS)
-        printf("TLB MISS: Page Number %i Not Found!\n", page_num);
-    else
-        printf("TLB HIT: Page Number %i Found!\n", page_num);
-
-    /* Find frame 3. Should MISS*/
-    page_num = 8;
-    TLB_seek_result = checkTLB(tlb_table, FIFO, page_num, frame_num);
-    if(TLB_seek_result == MISS)
-        printf("TLB MISS: Page Number %i Not Found!\n", page_num);
-    else
-        printf("TLB HIT: Page Number %i Found!\n", page_num);
-    return;
-}
 
 // returns 1 if TLBTable is Full, else 0
 int isTLBFull(TLBTable* tlb_table)
@@ -175,8 +126,84 @@ int isTLBFull(TLBTable* tlb_table)
     return 1;
 }
 
-// run the page replacement algorithm
+// run the page replacement algorithm for the TLB
 void runTLBPRA(TLBTable* tlb_table, const TLBEntry entry)
 {
+    static uint8_t tlb_fifo_position = 0; /* Start at 0 after TLB is full*/
+    tlb_fifo_position %= tlb_table->max_entries; /* Keep between [0:max_entries]*/
+    if(verbosity)
+        printf("Replacing TLB entry %i: Page %i -> %i | Frame %i -> %i.\n", tlb_fifo_position,
+        tlb_table->list[tlb_fifo_position].page_num,  entry.page_num,
+        tlb_table->list[tlb_fifo_position].frame_num, entry.frame_num);
+    setTLB(tlb_table->list, tlb_fifo_position++, entry);
+    return;
+}
 
+void testCheckTLB(TLBTable* tlb_table){
+    verbosity = 1;
+    int i;
+    Algorithm algorithm = FIFO;
+    uint8_t page_num;
+    uint8_t frame_num;
+    TLBEntry entries[] = {{0, 3}, {1, 7}, {2, 0}};
+    Seek TLB_seek_result = MISS;
+
+    struct {
+        uint8_t page_num;
+        const char* message;
+    } tests[] = {{3, "Found"}, {7, "Found"}, {0, "Found"}, {8, "Not Found"}};
+
+    for (i = 0; i < 3; i++) {
+        tlb_table->list[i].frame_num = entries[i].frame_num;
+        tlb_table->list[i].page_num  = entries[i].page_num;
+        tlb_table->num_entries++;
+    }
+        
+    for (i = 0; i < 4; i++) {
+        page_num = tests[i].page_num;
+        TLB_seek_result = checkTLB(tlb_table, algorithm, page_num, &frame_num);
+        printf("TLB %s: Page Number %i %s!\n", 
+               (TLB_seek_result == MISS) ? "MISS" : "HIT", page_num, tests[i].message);
+    }
+
+    return;
+}
+
+void testTLBPRA(){
+    verbosity = 1;
+    TLBTable* tlb_table;
+    TLBEntry entry;
+    int i;
+
+    tlb_table = safeMalloc(sizeof(TLBTable));
+    initTLBTable(tlb_table, MAX_TLB_ENTRIES_, MAX_FRAME_SIZE_ - 1);
+
+    printf("\n\n------------------------- TLB PRA TEST -------------------------\n");
+    printTLBTableDebug(tlb_table, 0);
+    /* fill up TLB */
+    for(i = 0; i < tlb_table->max_entries; i++){
+        tlb_table->list[i].frame_num   = i;
+        tlb_table->list[i].page_num    = i;
+        tlb_table->num_entries++;
+    }
+    
+    printf("\n\n------------------------- TLB TABLE FILLED -------------------------\n");
+    printTLBTableDebug(tlb_table, 0);
+
+    /* This should print:
+        replacing frame 0 -> 16 & page 0 -> 16
+        replacing frame 1 -> 17 & page 1 -> 17
+        replacing frame 2 -> 0 & page  2 -> 0  */
+    for(; i < tlb_table->max_entries + 20; i++){
+        entry.frame_num   = i;
+        entry.page_num    = i;
+        runTLBPRA(tlb_table, entry);
+    }
+
+    printf("\n\n------------------------- TLB TABLE REPLACEMENT -------------------------\n");
+    printTLBTableDebug(tlb_table, 0);
+
+
+
+    return;
 }

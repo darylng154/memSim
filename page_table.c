@@ -71,22 +71,28 @@ void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid)
 }
 
 // if page is in Page Table == 1, else == 0
-int isPageNumValid(PageTable* page_table, uint8_t page_num)
+// int isPageNumValid(PageTable* page_table, uint8_t page_num) // changed from
+int isPageNumValid(PageTable* page_table, uint8_t page_num, uint8_t *resolved_frame_num) // to
 {
-    if(page_table->list[page_num].valid == 1)
+    if(page_table->list[page_num].valid == 1){
+        *resolved_frame_num = page_table->list[page_num].frame_num; // added
         return 1;
+    }
 
     return 0;
 }
 
-Seek checkPageTable(Address* address, PageTable* page_table)
+// Seek checkPageTable(Address* address, PageTable* page_table) // changed from
+Seek checkPageTable(uint8_t page_num, PageTable* page_table, uint8_t *resolved_frame_num) // to
 {
-    if(isPageNumValid(page_table, address->page_num))
+    // if(isPageNumValid(page_table, address->page_num)) // change from
+    if(isPageNumValid(page_table, page_num, resolved_frame_num)) // to
     {
         // page # is in PageTable => 
         // hit: populate TLB w/ page & put into RAM
         if(verbosity)
-            printf("Page Table: Page %i Exists \n", address->page_num);
+            // printf("Page Table: Page %i Exists \n", address->page_num); // changed from
+            printf("Page Table: Page %i Exists \n", page_num); // to
 
         return HIT;
     }
@@ -97,7 +103,8 @@ Seek checkPageTable(Address* address, PageTable* page_table)
         // => no we discussed that we have to keep track of the TLB hit and miss seperate from page faults
         // because of the output
         if(verbosity)
-            printf("Page Table: Page %i Doesn't Exist \n", address->page_num);
+            // printf("Page Table: Page %i Doesn't Exist \n", address->page_num); // changed from
+            printf("Page Table: Page %i Doesn't Exist \n", page_num); // to
 
         return MISS;
     }
