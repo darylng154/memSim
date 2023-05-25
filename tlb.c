@@ -161,8 +161,16 @@ void testCheckTLB(TLBTable* tlb_table){
 // returns 1 if TLBTable is Full, else 0
 int isTLBFull(TLBTable* tlb_table)
 {
-    if(tlb_table->num_entries >= MAX_TLB_ENTRIES_)
+    if(tlb_table->num_entries <= MAX_TLB_ENTRIES_)
+    {
+        if(verbosity)
+            printf("TLBTable is not Full! \n");
+
         return 1;
+    }
+
+    if(verbosity)
+        printf("TLBTable is Full! | num_entries: %i \n", tlb_table->num_entries);
     
     return 0;
 }

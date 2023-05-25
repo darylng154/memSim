@@ -113,14 +113,13 @@ void runSimulator(AddressTable* address_table,
         if(TLB_seek_result == MISS){
             PT_seek_result = checkPageTable(&address_table->list[i], page_table);
             
+            PT_seek_result = HIT;
             if(PT_seek_result == HIT)
             {
                 // hit: 
                 // 1. put into Queue using Algorithm
                 // 2. increment page hit
                 // 3. populate TLB w/ page
-
-                
 
                 if(!isTLBFull(tlb_table))
                     addPageToTLBTable(tlb_table, address_table->list[i].page_num, 0);    // get frame # after putting into Queue
@@ -201,10 +200,10 @@ int main(int argc, char *argv[]){
     // for double checking tables / bin
     if(verbosity)
     {
-        // printAddressTable(address_table, 0);
-        // printTLBTableDebug(tlb_table, 0);
-        // printPageTableDebug(page_table, 0, 0);
-        // printPageTableDebug(queue, 0, 1);
+        printAddressTable(address_table, 0);
+        printTLBTableDebug(tlb_table, 0);
+        printPageTableDebug(page_table, 0, 0);
+        printPageTableDebug(queue, 0, 1);
         // printBuffer(bin_buffer, 256*3);
     }
 
