@@ -30,8 +30,10 @@ void printPageTableDebug(const PageTable* page_table, uint8_t printDetails, uint
 void pageSwap(Page* dest, Page* src);
 void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid);
 // if page is in Page Table == 1, else == 0
-int isPageNumValid(PageTable* page_table, uint8_t page_num);
-Seek checkPageTable(Address* address, PageTable* page_table);
+// int isPageNumValid(PageTable* page_table, uint8_t page_num); // changed from
+int isPageNumValid(PageTable* page_table, uint8_t page_num, uint8_t *resolved_frame_num); // to
+// Seek checkPageTable(Address* address, PageTable* page_table); // changed from
+Seek checkPageTable(uint8_t page_num, PageTable* page_table, uint8_t *resolved_frame_num); // to
 // returns 1 if TLBTable is Full, else 0; max_entries = <FRAME>
 int isQueueFull(PageTable* queue, uint8_t max_entries);
 // inject to front(queue[0]) based on Algorithm
