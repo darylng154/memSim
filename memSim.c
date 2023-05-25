@@ -4,6 +4,7 @@
 #include "tlb.h"
 #include "page_table.h"
 
+// NOTE: <FRAME> = num_frames + 1: save 8 bits :>
 
 #define BUFFER_     1024
 #define BIN_BUFFER_ 65536
@@ -100,11 +101,12 @@ void runSimulator(AddressTable* address_table,
                   TLBTable* tlb_table, 
                   PageTable* page_table, 
                   PageTable* queue,
-                  Algorithm algorithm)
+                  Algorithm algorithm,
+                  uint8_t num_frames)
 {
     Seek TLB_seek_result = MISS; /* result of looking for page number in TLB*/
     Seek PT_seek_result = MISS;  /* result of looking for page number in page table*/
-    uint8_t resolved_frame_num;
+    uint8_t resolved_frame_num;     // need to figure out which frame_num for each page (prob when adding to Queue)
     int i = 0;
     for(i = 0; i < address_table->num_entries; i++)
     {
@@ -113,34 +115,48 @@ void runSimulator(AddressTable* address_table,
         if(TLB_seek_result == MISS){
             PT_seek_result = checkPageTable(&address_table->list[i], page_table);
             
-            PT_seek_result = HIT;
+            // PT_seek_result = HIT;
             if(PT_seek_result == HIT)
             {
                 // hit: 
-                // 1. put into Queue using Algorithm
-                // 2. increment page hit
-                // 3. populate TLB w/ page
+                // 1. populate TLB w/ page
 
                 if(!isTLBFull(tlb_table))
-                    addPageToTLBTable(tlb_table, address_table->list[i].page_num, 0);    // get frame # after putting into Queue
+                    addPageToTLBTable(tlb_table, address_table->list[i].page_num, resolved_frame_num);
                 // else
-                //     runPRA();
+                //     runTLBPRA();
             }
             else
             {
                 // miss: 
                 // 1. get from "bin" (not necessary)
-                // 2. put into Queue using Algorithm
-                // 3. check for page fault
-                // 4. update TLB w/ missing page
+                // 2. make missing page valid
+                // 3. update TLB w/ missing page
 
+                // if Queue is not full: 
+                // 1. validate page_num in page table
+                // 2. addtoQueue(): inject to front(queue[0]) based on Algorithm
+
+                // else if is full:
+                // 1. run QueuePRA
+                // 2. update page table (removed & added page)
+
+                if(!isQueueFull(queue, num_frames + 1))
+                {
+                    setPage(page_table->list, address_table->list[i].page_num, resolved_frame_num, 1);
+                    addToQueue(queue, address_table->list[i].page_num);
+                }
+                // else
+                //     runQueuePRA();
             }
-                
                 // if(tlb_table->num_entries < tlb_table->max_entries)
                 //     ; /* Add page table to TLB*/
         }
         else
             ;// do something else
+
+        // 1. check queue if page fault or hit
+        // 2. put into Queue using Algorithm
     }
 }
 
@@ -194,7 +210,7 @@ int main(int argc, char *argv[]){
         printPageTableDebug(queue, 0, 1);
     }
 
-    runSimulator(address_table, tlb_table, page_table, queue, algorithm);
+    runSimulator(address_table, tlb_table, page_table, queue, algorithm, num_frames);
 
 
     // for double checking tables / bin

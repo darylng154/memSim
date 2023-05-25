@@ -9,6 +9,7 @@ typedef struct page_table PageTable;
 
 struct page
 {
+    // if its PageTable* Queue->frame_num = page num
     uint8_t frame_num;
     uint8_t valid;
 };
@@ -23,13 +24,17 @@ struct page_table
 
 void initPage(Page* page);
 void initPageTable(PageTable* page_table, uint16_t length);
-void printPage(const Page page, uint8_t printDetails);
-void printPageTable(const Page* list, uint8_t printDetails);
+void printPage(const Page page, uint8_t printDetails, uint8_t printQueue);
+void printPageTable(const Page* list, uint8_t printDetails, uint8_t printQueue);
 void printPageTableDebug(const PageTable* page_table, uint8_t printDetails, uint8_t printQueue);
 void pageSwap(Page* dest, Page* src);
 void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid);
 // if page is in Page Table == 1, else == 0
 int isPageNumValid(PageTable* page_table, uint8_t page_num);
 Seek checkPageTable(Address* address, PageTable* page_table);
+// returns 1 if TLBTable is Full, else 0; max_entries = <FRAME>
+int isQueueFull(PageTable* queue, uint8_t max_entries);
+// inject to front(queue[0]) based on Algorithm
+void addToQueue(PageTable* queue, uint8_t page_num);
 
 #endif

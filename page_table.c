@@ -17,9 +17,12 @@ void initPageTable(PageTable* page_table, uint16_t length)
     }
 }
 
-void printPage(const Page page, uint8_t printDetails)
+void printPage(const Page page, uint8_t printDetails, uint8_t printQueue)
 {
-    printf("frame_num: %- 2i | valid: %i", page.frame_num, page.valid);
+    if(printQueue)
+        printf("page_num: %-3i | valid: %i", page.frame_num, page.valid);
+    else
+        printf("frame_num: %-3i | valid: %i", page.frame_num, page.valid);
 
     if(printDetails)
         printf("future stuff (set printDetails = 0 atm)");
@@ -27,7 +30,7 @@ void printPage(const Page page, uint8_t printDetails)
         printf("\n");
 }
 
-void printPageTable(const Page* list, uint8_t printDetails)
+void printPageTable(const Page* list, uint8_t printDetails, uint8_t printQueue)
 {
     int i = 0;
     for(i = 0; i < MAX_FRAMES_; i++)
@@ -35,7 +38,7 @@ void printPageTable(const Page* list, uint8_t printDetails)
         if(list[i].valid)
         {
             printf("Page[%-3d]: ", i);
-            printPage(list[i], printDetails);
+            printPage(list[i], printDetails, printQueue);
         }
     }
 }
@@ -50,7 +53,7 @@ void printPageTableDebug(const PageTable* page_table, uint8_t printDetails, uint
     }
     else
         printf("\n\n#################################  Page Table  #################################\n");
-    printPageTable(page_table->list, printDetails);
+    printPageTable(page_table->list, printDetails, printQueue);
     printf("################################################################################\n\n\n");
 }
 
@@ -100,4 +103,37 @@ Seek checkPageTable(Address* address, PageTable* page_table)
     }
 }
 
-// void 
+// returns 1 if TLBTable is Full, else 0; max_entries = <FRAME>
+int isQueueFull(PageTable* queue, uint8_t num_frames)
+{
+    if(queue->num_entries < num_frames)
+    {
+        if(verbosity)
+            printf("Queue is not Full! \n");
+
+        return 0;
+    }
+
+    if(verbosity)
+        printf("Queue is Full! | num_entries: %i \n", queue->num_entries);
+    
+    return 1;
+}
+
+// inject to front(queue[0]) based on Algorithm
+void addToQueue(PageTable* queue, uint8_t page_num)
+{
+    int i = 0;
+    for(i = queue->num_entries; i > 0; i--)
+    {
+        // swap to make room
+        pageSwap(&queue->list[i], &queue->list[i-1]);
+    }
+
+    // inject
+    setPage(queue->list, 0, page_num, 1);
+    queue->num_entries++;
+
+    if(verbosity)
+        printf("addToQueue | page_num: %i | num_entries: %i \n", page_num, queue->num_entries);
+}
