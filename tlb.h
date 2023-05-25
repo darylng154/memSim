@@ -19,7 +19,7 @@ struct tlb_entry
 
 struct tlb_table
 {
-    uint32_t faults;
+    uint32_t miss;
     uint32_t hits;
     
     uint8_t max_entries;
