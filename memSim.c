@@ -120,9 +120,10 @@ void runSimulator(AddressTable* address_table,
                 // 2. increment page hit
                 // 3. populate TLB w/ page
 
+                
 
                 if(!isTLBFull(tlb_table))
-                    addPageToTLBTable(tlb_table, address_table->list[i].page_num, 0);    // 
+                    addPageToTLBTable(tlb_table, address_table->list[i].page_num, 0);    // get frame # after putting into Queue
                 // else
                 //     runPRA();
             }

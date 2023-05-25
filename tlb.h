@@ -40,7 +40,7 @@ void testCheckTLB(TLBTable* tlb_table);
 // returns 1 if TLBTable is Full, else 0
 int isTLBFull(TLBTable* tlb_table);
 // run the page replacement algorithm
-void runPRA(TLBTable* tlb_table, const TLBEntry entry);
+void runTLBPRA(TLBTable* tlb_table, const TLBEntry entry);
 
 
 #endif
