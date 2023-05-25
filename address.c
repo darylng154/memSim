@@ -51,7 +51,7 @@ void printBuffer(char* buffer, int length)
         }
 
         // printf("[%02d] 0x%0X ('%c')\t", i, buffer[i], (char)buffer[i]);
-        printf("%02X ", buffer[i]);
+        printf("%02X ", (uint8_t)buffer[i]);
     }
     printf("\n");
 }
