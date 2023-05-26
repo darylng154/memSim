@@ -45,8 +45,6 @@ uint16_t maskLogicalAddress(const uint32_t logical_address);
 uint8_t maskPageNum(const uint16_t right_most_bits);
 // masks the 16 rightmost bits to get the left 8-bits = page #
 uint8_t maskOffset(const uint16_t right_most_bits);
-// prob don't need this
-void runAlgorithm(AddressTable* address_table, Algorithm algorithm);
 void populatePageData(AddressTable* address_table, char* bin_buffer);
 
 #endif
