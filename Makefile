@@ -10,9 +10,9 @@ OBJS   = memSim.o page_table.o tlb.o safeutil.o options.o address.o
 HEADER = memSim.o page_table.h tlb.h safeutil.h options.h address.h
 
 # MAXFRAMES = 256
-MAXFRAMES = 3
+MAXFRAMES = 5
 MINFRAMES = 1
-TESTFILE = optFurthest.txt
+TESTFILE = opt2.txt
 # TESTFILE = fifoLarge.txt
 # TESTFILE = fifoSmall.txt
 # TESTFILE = fifoPRA.txt
@@ -30,13 +30,13 @@ depends:
 	makedepend -Y $(SRCS)
 
 fifo: clean memSim
-	./memSim testcases/$(TESTFILE) $(MAXFRAMES) FIFO -v
+	./memSim testcases/$(TESTFILE) $(MAXFRAMES) FIFO
 
 lru: clean memSim
-	./memSim testcases/$(TESTFILE) $(MAXFRAMES) LRU -v
+	./memSim testcases/$(TESTFILE) $(MAXFRAMES) LRU
 
 opt: clean memSim
-	./memSim testcases/$(TESTFILE) $(MAXFRAMES) OPT -v
+	./memSim testcases/$(TESTFILE) $(MAXFRAMES) OPT
 
 testfails: clean memSim
 	@echo ------------- Executing $(PROG) usage test 1 -------------

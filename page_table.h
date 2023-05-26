@@ -54,7 +54,7 @@ void slideQueue(PageTable* queue, uint8_t popped_pos);
 // check each entry in Queue that does not exist in the future (in AddressTable->list)
 // 0 == not found, 1 == removed page num (to invalidate)
 uint8_t removeNoFutureInQueue(PageTable* queue, PageTable* page_table, AddressTable* address_table, uint32_t current_index);
-uint8_t removeFurthestInQueue(PageTable* queue, AddressTable* address_table, uint32_t current_index);
+uint8_t removeFurthestInQueue(PageTable* queue, AddressTable* address_table, uint32_t* current_index);
 void runQueueOPT(PageTable* queue, PageTable* page_table, AddressTable* address_table, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result, uint32_t current_index);
 
 #endif
