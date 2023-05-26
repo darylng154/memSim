@@ -46,6 +46,7 @@ int isQueueFull(PageTable* queue, uint8_t max_entries);
 void addToQueue(PageTable* queue, uint8_t page_num);
 // remove last queue entry & make room in queue->list[0]
 void removeLastInQueue(PageTable* queue);
+void removeFromQueue(PageTable* queue, uint8_t index);
 // run QueuePRA - replace page in Queue & page fault++
 void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algorithm, uint8_t page_num, Seek TLB_seek_result, Seek PT_seek_result);
 void runQueueFIFO(PageTable* queue, AddressTable* address_table, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result);

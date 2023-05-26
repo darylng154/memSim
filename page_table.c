@@ -163,6 +163,19 @@ void removeLastInQueue(PageTable* queue)
     }
 }
 
+// remove queue entry @ index & make room in queue->list[0]
+void removeFromQueue(PageTable* queue, uint8_t index)
+{
+    setPage(queue->list, index, 0, 0);
+
+    int i = 0;
+    for(i = index; i > 0; i--)
+    {
+        // swap to make room
+        pageSwap(&queue->list[i], &queue->list[i-1]);
+    }
+}
+
 // run QueuePRA - replace page in Queue & page fault++
 void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algorithm, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result)
 {
@@ -280,13 +293,28 @@ void slideQueue(PageTable* queue, uint8_t popped_pos)
     return;
 }
 
+// check each entry in Queue that does not exist in the future (in AddressTable->list)
 void removeNoFutureInQueue(PageTable* queue, AddressTable* address_table, uint32_t current_index)
 {
-    int i = 0;
-    for(i = current_index; i < address_table->num_entries; i++)
-    {
+    int i = 0, j = 0;
+    // for(i = current_index; i < address_table->num_entries; i++)
+    // {
         
+    // }
+    uint8_t farthest_page_num = 0;
+    for(i = 0; i < queue->num_entries; i++)
+    {
+        // check the all items from the next index (= current address list entry + 1)
+        for(j = current_index + 1; j < address_table->num_entries; i++)
+        {
+            // if not in the future address list => remove
+            if(queue->list[i].frame_num != address_table->list[i].page_num)
+            {
+                removeFromQueue(queue, i);
+            }
+        }
     }
+
 }
 
 void removeFurthestInQueue(PageTable* queue, AddressTable* address_table, uint32_t current_index)

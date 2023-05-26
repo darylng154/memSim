@@ -129,16 +129,7 @@ void runSimulator(AddressTable* address_table,
             {
                 new_tlb_entry.frame_num = resolved_frame_num;
 
-                // hit: 
-                // 1. update TLB w/ page (remove & add tlb entry)
-
-                if(!isTLBFull(tlb_table))
-                    // addPageToTLBTable(tlb_table, address_table->list[i].page_num, 0); // changed from
-                    addPageToTLBTable(tlb_table, new_tlb_entry);    // to
-                else
-                    runTLBPRA(tlb_table, new_tlb_entry);
-
-                // 2. update Queue if LRU
+                // 1. update Queue if LRU
                 if(algorithm == LRU && queue->num_entries > 1)
                     runQueuePRA(queue, 
                                 address_table, 
@@ -211,7 +202,7 @@ void runSimulator(AddressTable* address_table,
             printf("#################################  after TLB & Page Table HIT/MISS  #################################");
             printf("\n\n#################################  Address Table  #################################\n");
             printf("| page_faults: %i \n", address_table->page_faults);
-            // printTLBTableDebug(tlb_table, 0);
+            printTLBTableDebug(tlb_table, 0);
             // printPageTableDebug(page_table, 0, 0);
             printPageTableDebug(queue, 0, 1);
         }
@@ -271,6 +262,7 @@ int main(int argc, char *argv[]){
 
     tlb_table = safeMalloc(sizeof(TLBTable));
     initTLBTable(tlb_table, MAX_TLB_ENTRIES_, num_frames);
+    tlb_table->max_entries = 5;
 
     page_table = safeMalloc(sizeof(PageTable));
     initPageTable(page_table, MAX_FRAME_SIZE_);
