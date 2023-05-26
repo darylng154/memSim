@@ -85,6 +85,7 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
         if(verbosity)
             printf("TLB empty: Page %i Doesn't Exist \n", page_num);
         tlb_table->miss++;
+        tlb_table->miss++;
         return MISS;
     }
     
@@ -106,6 +107,7 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
     /* No hit*/
     if(verbosity)
             printf("TLB: Page %i Doesn't Exist \n", page_num);
+    tlb_table->miss++;
     tlb_table->miss++;
     return MISS;
 }
@@ -133,11 +135,18 @@ void runTLBPRA(TLBTable* tlb_table, const TLBEntry entry)
 {
     static uint8_t tlb_fifo_position = 0; /* Start at 0 after TLB is full*/
     tlb_fifo_position %= tlb_table->max_entries; /* Keep between [0:max_entries]*/
-    if(verbosity)
-        printf("Replacing TLB entry %-3i: Page %-3i -> %-3i | Frame %-3i -> %-3i.\n", tlb_fifo_position,
+    if(verbosity){
+        printf("Replacing TLB entry %i: Page %i -> %i | Frame %i -> %i.\n", tlb_fifo_position,
         tlb_table->list[tlb_fifo_position].page_num,  entry.page_num,
         tlb_table->list[tlb_fifo_position].frame_num, entry.frame_num);
+        printTLBTableDebug(tlb_table, 0);
+    }
     setTLB(tlb_table->list, tlb_fifo_position++, entry);
+    if(verbosity){
+        printf("\n\n------------------------- TLB TABLE REPLACEMENT -------------------------\n");
+        printTLBTableDebug(tlb_table, 0);
+    }
+
     return;
 }
 
@@ -190,7 +199,6 @@ void testTLBPRA(){
     }
     
     printf("\n\n------------------------- TLB TABLE FILLED -------------------------\n");
-    printTLBTableDebug(tlb_table, 0);
 
     /* This should print:
         replacing frame 0 -> 16 & page 0 -> 16
@@ -202,8 +210,6 @@ void testTLBPRA(){
         runTLBPRA(tlb_table, entry);
     }
 
-    printf("\n\n------------------------- TLB TABLE REPLACEMENT -------------------------\n");
-    printTLBTableDebug(tlb_table, 0);
 
     return;
 }
