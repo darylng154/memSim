@@ -285,7 +285,7 @@ void removeNoFutureInQueue(PageTable* queue, AddressTable* address_table, uint32
     int i = 0;
     for(i = current_index; i < address_table->num_entries; i++)
     {
-
+        
     }
 }
 
