@@ -33,7 +33,7 @@ fifo: clean memSim
 	./memSim testcases/$(TESTFILE) $(MAXFRAMES) FIFO -v
 
 lru: clean memSim
-	../memSim testcases/$(TESTFILE) $(MAXFRAMES) LRU -v
+	./memSim testcases/$(TESTFILE) $(MAXFRAMES) LRU -v
 
 opt: clean memSim
 	./memSim testcases/$(TESTFILE) $(MAXFRAMES) OPT -v
