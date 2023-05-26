@@ -74,40 +74,31 @@ void setPage(Page* list, uint8_t index, uint8_t frame_num, uint8_t valid)
 }
 
 // if page is in Page Table == 1, else == 0
-// int isPageNumValid(PageTable* page_table, uint8_t page_num) // changed from
-int isPageNumValid(PageTable* page_table, uint8_t page_num, uint8_t *resolved_frame_num) // to
+int isPageNumValid(PageTable* page_table, uint8_t page_num, uint8_t *resolved_frame_num)
 {
     if(page_table->list[page_num].valid == 1){
-        *resolved_frame_num = page_table->list[page_num].frame_num; // added
+        *resolved_frame_num = page_table->list[page_num].frame_num;
         return 1;
     }
 
     return 0;
 }
 
-// Seek checkPageTable(Address* address, PageTable* page_table) // changed from
-Seek checkPageTable(uint8_t page_num, PageTable* page_table, uint8_t *resolved_frame_num) // to
+Seek checkPageTable(uint8_t page_num, PageTable* page_table, uint8_t *resolved_frame_num)
 {
-    // if(isPageNumValid(page_table, address->page_num)) // change from
-    if(isPageNumValid(page_table, page_num, resolved_frame_num)) // to
+    if(isPageNumValid(page_table, page_num, resolved_frame_num))
     {
         // page # is in PageTable => 
         // hit: populate TLB w/ page & put into RAM
         if(verbosity)
-            // printf("Page Table: Page %i Exists \n", address->page_num); // changed from
-            printf(">>>>>>>> Page Table: Page %i Exists <<<<<<<<\n", page_num); // to
+            printf(">>>>>>>> Page Table: Page %i Exists <<<<<<<<\n", page_num);
 
         return HIT;
     }
     else
     {
-        // get page from .bin . Might want to do this in the start sim function
-        //  Not sure if we should consider both the TLB and the page table misses somewhat together
-        // => no we discussed that we have to keep track of the TLB hit and miss seperate from page faults
-        // because of the output
         if(verbosity)
-            // printf("Page Table: Page %i Doesn't Exist \n", address->page_num); // changed from
-            printf(">>>>>>>> Page Table: Page %i Doesn't Exist <<<<<<<<\n", page_num); // to
+            printf(">>>>>>>> Page Table: Page %i Doesn't Exist <<<<<<<<\n", page_num);
 
         return MISS;
     }
@@ -257,7 +248,7 @@ uint8_t getQueuePosition(PageTable* queue, uint8_t page_num)
     int queue_pos;
     uint8_t curr_page_num; /* Queue page num is stored in frame_num*/
 
-    for(queue_pos = queue->num_entries; queue_pos > 0; queue_pos--){
+    for(queue_pos = queue->num_entries; queue_pos >= 0; queue_pos--){
         curr_page_num = queue->list[queue_pos].frame_num; /* For clarity, queue frame num = page num*/
         if(curr_page_num == page_num){
             if(verbosity){
@@ -268,7 +259,7 @@ uint8_t getQueuePosition(PageTable* queue, uint8_t page_num)
         }
     }
     
-    errorout("Something went wrong. Can't find page in queue");
+    errorout("Something went wrong. Can't find page in queue.\n");
     return 0;
 }
 

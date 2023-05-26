@@ -22,7 +22,6 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
     unsigned int *addresses = NULL;
 
     addresses = (unsigned int *)safeMalloc(sizeof(unsigned int) * buffer_size); /* Make space*/
-    // addresses = (unsigned int *)calloc(buffer_size, buffer_size)
 
     errno = 0;
     while(!feof(file_ptr)){ /* While not at EOF*/
@@ -33,7 +32,6 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
                     printf("Address: %u\n", address);
                 addresses[running_count++] = address; /* Store address*/
             }
-                // running_count++; /* Increment running address counter*/
             if(running_count >= (buffer_size - 1)){ /* Need more space*/
                 addresses = (unsigned int *)safeRealloc(addresses, buffer_size + BUFFER_, buffer_size, sizeof(unsigned int));
                 buffer_size += BUFFER_; /* Increase buffer size*/
@@ -46,6 +44,7 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
     if(errno) /* Something went wrong*/
         errorout("ReadFile failed.\n");
 
+    if(verbosity)
     if(verbosity)
         printf("Total number of addresses: %u\n", running_count);
     
@@ -204,6 +203,7 @@ void runSimulator(AddressTable* address_table,
             printf("#################################  after TLB & Page Table HIT/MISS  #################################");
             printf("\n\n#################################  Address Table  #################################\n");
             printf("| page_faults: %i \n", address_table->page_faults);
+            printTLBTableDebug(tlb_table, 0);
             printTLBTableDebug(tlb_table, 0);
             // printPageTableDebug(page_table, 0, 0);
             printPageTableDebug(queue, 0, 1);
