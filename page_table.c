@@ -37,7 +37,10 @@ void printPageTable(const Page* list, uint8_t printDetails, uint8_t printQueue)
     {
         if(list[i].valid)
         {
-            printf("Page[%-3d]: ", i);
+            if(printQueue)
+                printf("Queue[%-3d]: ", i);
+            else
+                printf("Page[%-3d]: ", i);
             printPage(list[i], printDetails, printQueue);
         }
     }
@@ -143,6 +146,73 @@ void addToQueue(PageTable* queue, uint8_t page_num)
 
     if(verbosity)
         printf("addToQueue | page_num: %i | num_entries: %i \n", page_num, queue->num_entries);
+}
+
+// remove last queue entry & make room in queue->list[0]
+void removeLastInQueue(PageTable* queue)
+{
+    setPage(queue->list, queue->num_entries - 1, 0, 0);
+
+    int i = 0;
+    for(i = queue->num_entries - 1; i > 0; i--)
+    {
+        // swap to make room
+        pageSwap(&queue->list[i], &queue->list[i-1]);
+    }
+}
+
+// run QueuePRA - replace page in Queue & page fault++
+void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algorithm, uint8_t page_num, uint8_t *resolved_frame_num, Seek TLB_seek_result, Seek PT_seek_result)
+{
+    switch(algorithm)
+    {
+        case FIFO:
+            if(verbosity)
+                printf("runQueuePRA FIFO\n");
+
+            runQueueFIFO(queue, page_num, TLB_seek_result, PT_seek_result);
+            break;
+
+        case LRU:
+            if(verbosity)
+                printf("runQueuePRA LRU\n");
+            break;
+
+        case OPT:
+            if(verbosity)
+                printf("runQueuePRA OPT\n");
+            break;
+
+        default:
+            perror("#ERROR: runQueuePRA defaulted, does not exist \n");
+            exit(EXIT_FAILURE);
+            break;
+    }
+
+    address_table->page_faults++;
+}
+
+void runQueueFIFO(PageTable* queue, uint8_t page_num, Seek TLB_seek_result, Seek PT_seek_result)
+{
+    if(TLB_seek_result == MISS && PT_seek_result == MISS)
+    {
+        removeLastInQueue(queue);
+
+        // inject
+        setPage(queue->list, 0, page_num, 1);
+
+        if(verbosity)
+            printf("runQueueFIFO | page_num: %i | num_entries: %i \n", page_num, queue->num_entries);
+    }
+}
+
+// update page table (removed & added page)
+void updatePageTable(Page* list, uint8_t old_page_num, uint8_t new_page_num, uint8_t frame_num)
+{
+    // invalidate old page
+    setPage(list, old_page_num, frame_num, 0);
+    // validate new page
+    setPage(list, new_page_num, frame_num, 1);
 }
 
 

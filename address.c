@@ -87,6 +87,7 @@ void printAddressTable(const AddressTable* address_table, uint8_t printFrame)
 {
     int i = 0;
     printf("\n\n#################################  Address Table  #################################\n");
+    printf("| page_faults: %i \n", address_table->page_faults);
     for(i = 0; i < address_table->num_entries; i++)
     {
         printf("AddressTable[%-3i] | ", i);
@@ -152,33 +153,6 @@ uint8_t maskOffset(const uint16_t right_most_bits)
     return result;
 }
 
-// prob don't need this
-void runAlgorithm(AddressTable* address_table, Algorithm algorithm)
-{
-    switch(algorithm)
-    {
-        case FIFO:
-            if(verbosity)
-                printf("Running FIFO\n");
-            break;
-
-        case LRU:
-            if(verbosity)
-                printf("Running LRU\n");
-            break;
-
-        case OPT:
-            if(verbosity)
-                printf("Running OPT\n");
-            break;
-
-        default:
-            perror("#ERROR: runAlgorithm defaulted, %u does not exist\n");
-            exit(EXIT_FAILURE);
-            break;
-    }
-}
-
 /* I think this function is a bit confused on what we are wanting to do. 
     Here we want to populate the page_data but the page_data number doesn't get set
     until the page is added to the page table. It would seem wrong to add 
@@ -210,16 +184,16 @@ void populatePageData(AddressTable* address_table, char* bin_buffer)
                bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_) + address_table->list[i].offset, 
                1);
 
-        if(verbosity)
-        {
-            // checking if memcpys is correct => yes
-            // printf("Page Data: \n");
-            // printAddressPageData(address_table->list[i].page_data, MAX_FRAME_SIZE_);
+        // if(verbosity)
+        // {
+        //     checking if memcpys is correct => yes
+        //     printf("Page Data: \n");
+        //     printAddressPageData(address_table->list[i].page_data, MAX_FRAME_SIZE_);
 
-            // printf("Bin Data: \n");
-            // printBuffer((bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_)), 
-            //             MAX_FRAME_SIZE_);
-        }
+        //     printf("Bin Data: \n");
+        //     printBuffer((bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_)), 
+        //                 MAX_FRAME_SIZE_);
+        // }
     }
 
     // if(verbosity)
