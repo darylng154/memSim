@@ -44,6 +44,7 @@ int isTLBFull(TLBTable* tlb_table);
 void runTLBPRA(TLBTable* tlb_table, const TLBEntry entry);
 void testTLBPRA();
 Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_t *resolved_frame_num);
+void printTLBResults(const TLBTable* tlb_table, uint32_t num_entries);
 
 
 #endif

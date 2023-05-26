@@ -203,6 +203,24 @@ void runSimulator(AddressTable* address_table,
     }
 }
 
+void printResults(const AddressTable* address_table, const TLBTable* tlb_table)
+{
+    int i = 0;
+    for(i = 0; i < address_table->num_entries; i++)
+    {
+        printf("%i, %i, %i, \n", 
+        address_table->list[i].address,
+        address_table->list[i].byte_referenced,
+        address_table->list[i].frame_num
+        );
+
+        // print page_data & new line after
+        printPageData((char*)address_table->list[i].page_data, MAX_FRAME_SIZE_);
+        printPageFaults(address_table);
+        printTLBResults(tlb_table, address_table->num_entries);
+    }
+}
+
 int main(int argc, char *argv[]){
     char *filename;                         /* Name of input file*/
     uint8_t num_frames = MAX_FRAMES_;       /* User specified number of frames*/
@@ -256,15 +274,15 @@ int main(int argc, char *argv[]){
     //     testTLBPRA();
 
     runSimulator(address_table, tlb_table, page_table, queue, algorithm, num_frames);
-
+    printResults(address_table, tlb_table);
 
     // for double checking tables / bin
     if(verbosity)
     {
-        printAddressTable(address_table, 0);
-        printTLBTableDebug(tlb_table, 0);
-        printPageTableDebug(page_table, 0, 0);
-        printPageTableDebug(queue, 0, 1);
+        // printAddressTable(address_table, 0);
+        // printTLBTableDebug(tlb_table, 0);
+        // printPageTableDebug(page_table, 0, 0);
+        // printPageTableDebug(queue, 0, 1);
         // printBuffer(bin_buffer, 256*3);
     }
 

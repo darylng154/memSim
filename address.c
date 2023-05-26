@@ -201,3 +201,34 @@ void populatePageData(AddressTable* address_table, char* bin_buffer)
 
     return;
 }
+
+void printPageData(char* buffer, int length)
+{
+    int i;
+
+    if(buffer == NULL)
+    {
+        perror("#ERROR: buffer empty!!!!");
+        exit(1);
+    }
+
+    for(i = 0; i < length; i++)
+    {
+        printf("%02X", (uint8_t)buffer[i]);
+
+    }
+    printf("\n");
+}
+
+void printPageFaults(const AddressTable* address_table)
+{
+    float page_faults = address_table->page_faults/address_table->num_entries;
+
+    printf("Number of Translated Addresses = %i \n"
+            "Page Faults = %i \n"
+            "Page Fault Rate = %3.2f \n", 
+            address_table->num_entries,
+            address_table->page_faults,
+            page_faults
+            );
+}
