@@ -12,10 +12,10 @@ HEADER = memSim.o page_table.h tlb.h safeutil.h options.h address.h
 # MAXFRAMES = 256
 MAXFRAMES = 18
 MINFRAMES = 1
-# TESTFILE = fifo1.txt
+TESTFILE = fifo1.txt
 # TESTFILE = fifoLarge.txt
 # TESTFILE = fifoSmall.txt
-TESTFILE = fifoPRA.txt
+# TESTFILE = fifoPRA.txt
 
 all:  $(PROG)
 

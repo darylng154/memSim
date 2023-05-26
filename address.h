@@ -17,7 +17,7 @@ struct address
     uint8_t page_num;
     uint8_t offset;
 
-    int byte_referenced;
+    int8_t byte_referenced;
     uint8_t frame_num;
     uint8_t page_data[MAX_FRAME_SIZE_];
 };
@@ -46,5 +46,7 @@ uint8_t maskPageNum(const uint16_t right_most_bits);
 // masks the 16 rightmost bits to get the left 8-bits = page #
 uint8_t maskOffset(const uint16_t right_most_bits);
 void populatePageData(AddressTable* address_table, char* bin_buffer);
+void printPageData(char* buffer, int length);
+void printPageFaults(const AddressTable* address_table);
 
 #endif
