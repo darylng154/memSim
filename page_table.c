@@ -178,6 +178,7 @@ void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algori
         case LRU:
             if(verbosity)
                 printf("runQueuePRA LRU\n");
+            runQueueLRU(queue, TLB_seek_result, PT_seek_result, page_num);
             break;
 
         case OPT:
@@ -218,33 +219,29 @@ void updatePageTable(Page* list, uint8_t old_page_num, uint8_t new_page_num, uin
 }
 
 
-void runQueueLRU(PageTable* queue, Seek TLB_seek_result, Seek PT_seek_result, TLBEntry new_tlb_entry){
-    
+void runQueueLRU(PageTable* queue, Seek TLB_seek_result, Seek PT_seek_result, uint8_t page_num)
+{
     uint8_t queue_pos;
     
-    queue_pos = getQueuePosition(queue, new_tlb_entry.page_num);
-
-// void addToQueue(PageTable* queue, uint8_t page_num)
-// {
-    // int i = 0;
-    // for(i = queue->num_entries; i > 0; i--)
-    // {
-        // swap to make room
-    //     pageSwap(&queue->list[i], &queue->list[i-1]);
-    // }
-
-    if(TLB_seek_result == HIT){
-        queue->list[queue_pos];
+    if(TLB_seek_result == HIT || PT_seek_result == HIT)
+    {
+        if(queue->num_entries > 1)
+        {
+            queue_pos = getQueuePosition(queue, page_num);
+            reorderQueue(queue, queue_pos);
+        }
+        else
+            return;
     }
-    else if(PT_seek_result == HIT){
-
+    else if(PT_seek_result == MISS)
+    {
+        runQueueFIFO(queue, page_num, TLB_seek_result, PT_seek_result);
     }
-    else if(PT_seek_result == MISS){
-
-    }
+    return;
 }
 
-uint8_t getQueuePosition(PageTable* queue, uint8_t page_num){
+uint8_t getQueuePosition(PageTable* queue, uint8_t page_num)
+{
     int queue_pos;
     uint8_t curr_page_num; /* Queue page num is stored in frame_num*/
 
@@ -263,20 +260,23 @@ uint8_t getQueuePosition(PageTable* queue, uint8_t page_num){
     return 0;
 }
 
-void reorderQueue(PageTable* queue, uint8_t queue_pos){
+void reorderQueue(PageTable* queue, uint8_t queue_pos)
+{
     Page temp_page;
     temp_page = queue->list[queue_pos]; /* Store the queue page*/
     slideQueue(queue, queue_pos); /* Slide queue and leave a spot at the front*/
-    /* Push to back of queue*/
+    queue->list[0] = temp_page;/* Push to back of queue*/
+    return;
 }
 
-void slideQueue(PageTable* queue, uint8_t popped_pos){
+void slideQueue(PageTable* queue, uint8_t popped_pos)
+{
     int queue_pos;
 
-    for(queue_pos = popped_pos; queue_pos > 0; queue_pos--){
-
+    for(queue_pos = popped_pos; queue_pos > 0; queue_pos--)
+    {
+        pageSwap(&queue->list[queue_pos], &queue->list[queue_pos - 1]);
     }
-
     return;
 }
 
