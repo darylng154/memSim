@@ -133,7 +133,6 @@ void runSimulator(AddressTable* address_table,
                 // 1. update TLB w/ page (remove & add tlb entry)
 
                 if(!isTLBFull(tlb_table))
-                    // addPageToTLBTable(tlb_table, address_table->list[i].page_num, 0); // changed from
                     addPageToTLBTable(tlb_table, new_tlb_entry);    // to
                 else
                     runTLBPRA(tlb_table, new_tlb_entry);
@@ -211,7 +210,7 @@ void runSimulator(AddressTable* address_table,
             printf("#################################  after TLB & Page Table HIT/MISS  #################################");
             printf("\n\n#################################  Address Table  #################################\n");
             printf("| page_faults: %i \n", address_table->page_faults);
-            // printTLBTableDebug(tlb_table, 0);
+            printTLBTableDebug(tlb_table, 0);
             // printPageTableDebug(page_table, 0, 0);
             printPageTableDebug(queue, 0, 1);
         }

@@ -13,10 +13,11 @@ void initTLBTable(TLBTable* tlb_table, uint8_t length, uint8_t num_frames)
     tlb_table->miss = 0;
     tlb_table->hits = 0;
 
-    if(num_frames + 1 >= MAX_TLB_ENTRIES_) /* If there are at least 16 frames*/
-        tlb_table->max_entries = MAX_TLB_ENTRIES_; /* Set max entries to 16*/
-    else
-        tlb_table->max_entries = num_frames + 1; /* Else TLB will only hold < 16*/
+    // if(num_frames + 1 >= MAX_TLB_ENTRIES_) /* If there are at least 16 frames*/
+    //     tlb_table->max_entries = MAX_TLB_ENTRIES_; /* Set max entries to 16*/
+    // else
+    //     tlb_table->max_entries = num_frames + 1; /* Else TLB will only hold < 16*/
+        tlb_table->max_entries = 5; /* Else TLB will only hold < 16*/
 
     tlb_table->num_entries = 0;
 
@@ -134,14 +135,14 @@ void runTLBPRA(TLBTable* tlb_table, const TLBEntry entry)
     static uint8_t tlb_fifo_position = 0; /* Start at 0 after TLB is full*/
     tlb_fifo_position %= tlb_table->max_entries; /* Keep between [0:max_entries]*/
     if(verbosity){
+        printTLBTableDebug(tlb_table, 0);
         printf("Replacing TLB entry %-3i: Page %-3i -> %-3i | Frame %-3i -> %-3i.\n", tlb_fifo_position,
         tlb_table->list[tlb_fifo_position].page_num,  entry.page_num,
         tlb_table->list[tlb_fifo_position].frame_num, entry.frame_num);
-        printTLBTableDebug(tlb_table, 0);
     }
     setTLB(tlb_table->list, tlb_fifo_position++, entry);
     if(verbosity){
-        printf("\n\n------------------------- TLB TABLE REPLACEMENT -------------------------\n");
+        printf("\n\n------------------------- UPDATED TLB TABLE -------------------------\n");
         printTLBTableDebug(tlb_table, 0);
     }
 
