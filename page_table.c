@@ -178,7 +178,7 @@ void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algori
         case LRU:
             if(verbosity)
                 printf("runQueuePRA LRU\n");
-            runQueueLRU(queue, TLB_seek_result, PT_seek_result, page_num);
+            runQueueLRU(queue, TLB_seek_result, PT_seek_result, seek_page_num);
             break;
 
         case OPT:
