@@ -4,6 +4,8 @@
 #include "address.h"
 #include "tlb.h"
 
+#define PRINT_QUEUE_ 1
+
 typedef struct page Page;
 typedef struct page_table PageTable;
 
