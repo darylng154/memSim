@@ -50,7 +50,7 @@ void printTLBTable(const TLBEntry* list, uint8_t length, uint8_t printDetails)
 void printTLBTableDebug(const TLBTable* tlb_table, uint8_t printDetails)
 {
     printf("\n\n#################################  TLB Table  #################################\n");
-    printf("| num_entries: %i | max_entries: %i | hits: %i | miss: %i \n", tlb_table->num_entries, tlb_table->max_entries, tlb_table->hits, tlb_table->miss);
+    printf("| num_entries: %i | max_entries: %i | hits: %i | miss: %i \n", tlb_table->num_entries, tlb_table->max_entries + 1, tlb_table->hits, tlb_table->miss);
     printTLBTable(tlb_table->list, tlb_table->num_entries, printDetails);
     printf("###############################################################################\n\n\n");
 }
@@ -83,7 +83,7 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
     /* If there are no entries in the tlb_table then it is a miss*/
     if(tlb_table->num_entries <= 0){
         if(verbosity)
-            printf("TLB empty: Page %i Doesn't Exist \n", page_num);
+            printf("<<<<<<<< TLB empty: Page %i Doesn't Exist In TLB >>>>>>>>\n\n", page_num);
         tlb_table->miss++;
         return MISS;
     }
@@ -92,7 +92,7 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
         if(tlb_table->list[TLB_entry].page_num == page_num){ /* Entry found*/
             *frame_num = tlb_table->list[TLB_entry].frame_num;
             if(verbosity)
-                printf("TLB: Page %i Exists. Its mapped to frame %i\n", page_num, *frame_num);
+                printf("<<<<<<<< TLB: Page %i Exists. Its mapped to frame %i >>>>>>>>\n", page_num, *frame_num);
             // if(algorithm == LRU)
             //     ; /* Adjust queue location. Put to front of queue, like it's the newest entry*/
             // else if(algorithm == OPT)
@@ -105,7 +105,7 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
     }
     /* No hit*/
     if(verbosity)
-        printf("TLB: Page %i Doesn't Exist \n", page_num);
+        printf("<<<<<<<< TLB: Page %i Doesn't Exist >>>>>>>>\n", page_num);
     tlb_table->miss++;
     return MISS;
 }

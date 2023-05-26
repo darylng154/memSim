@@ -114,10 +114,14 @@ void runSimulator(AddressTable* address_table,
     {
         seek_page_num = address_table->list[i].page_num;
         new_tlb_entry.page_num  = seek_page_num;
+        if(verbosity)
+            printf(">>>>>>>> Seeking TLB for page number: %i <<<<<<<<\n\n", seek_page_num);
         TLB_seek_result = checkTLB(tlb_table, algorithm, seek_page_num, &resolved_frame_num);
         
         if(TLB_seek_result == MISS){
             // PT_seek_result = checkPageTable(&address_table->list[i], page_table); // changed from
+            if(verbosity)
+                printf(">>>>>>>> Seeking Page Table for page number: %i <<<<<<<<\n\n", seek_page_num);
             PT_seek_result = checkPageTable(seek_page_num, page_table, &resolved_frame_num); // to
             
             // PT_seek_result = HIT;

@@ -97,7 +97,7 @@ Seek checkPageTable(uint8_t page_num, PageTable* page_table, uint8_t *resolved_f
         // hit: populate TLB w/ page & put into RAM
         if(verbosity)
             // printf("Page Table: Page %i Exists \n", address->page_num); // changed from
-            printf("Page Table: Page %i Exists \n", page_num); // to
+            printf(">>>>>>>> Page Table: Page %i Exists <<<<<<<<\n", page_num); // to
 
         return HIT;
     }
@@ -109,7 +109,7 @@ Seek checkPageTable(uint8_t page_num, PageTable* page_table, uint8_t *resolved_f
         // because of the output
         if(verbosity)
             // printf("Page Table: Page %i Doesn't Exist \n", address->page_num); // changed from
-            printf("Page Table: Page %i Doesn't Exist \n", page_num); // to
+            printf(">>>>>>>> Page Table: Page %i Doesn't Exist <<<<<<<<\n", page_num); // to
 
         return MISS;
     }
