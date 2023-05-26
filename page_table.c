@@ -317,28 +317,49 @@ uint8_t removeNoFutureInQueue(PageTable* queue, PageTable* page_table, AddressTa
     return 0;
 }
 
-void removeFurthestInQueue(PageTable* queue, AddressTable* address_table, uint32_t current_index)
+/* Returns page number*/
+uint8_t removeFurthestInQueue(PageTable* queue, AddressTable* address_table, uint32_t current_index)
 {
-    int i = 0, j = 0, furthest_index = 0;
+    int i = 0, j = 0, furthest_index = 0, curr_page_num;
 
-    for(i = 0; i < queue->num_entries; i++)
+    for(i = 0; i < queue->num_entries; i++) /* Index for queue*/
     {
+        curr_page_num = queue->list[i].frame_num; /* queue frame num = page num*/
+        if(verbosity)
+            printf("<<<<<<<< Looking for Future Address (Page) [%-3d] >>>>>>>>\n", curr_page_num);
         // check the all items from the back of the queue to current address
-        for(j = address_table->num_entries - 1; j > current_index; j--)
+        for(j = address_table->num_entries - 1; j > current_index; j--) /* Index for address list*/
         {
-            // // if queue page num is found, check if its the largest index
-            // if(queue->list[i].frame_num == address_table->list[j].page_num)
-            // {
-            //     if(verbosity)
-            //     {
-            //         printf("removeNoFutureInQueue removed | ");
-            //         printPage(queue->list[i], 0, 1);
-            //     }
-            //     removeFromQueue(queue, i);
-
-            // }
+            // if queue page num is found, check if its the largest index
+            if(curr_page_num == address_table->list[j].page_num){
+                if(verbosity)
+                    printf(">>>>>>>> Future Address (Page) [%-3d] Found. Keep Looking <<<<<<<<\n", 
+                           address_table->list[j].page_num);
+                continue;
+            }
         }
+        if(verbosity){
+            printf(">>>>>>>> NO Future Address (Page) [%-3d] Found <<<<<<<<\n", 
+                   curr_page_num);
+                   printf("<<<<<<<< Removing Page [%-3d] From Queue >>>>>>>>\n", curr_page_num);
+            printPage(queue->list[i], 0, 1);
+        }
+
+        furthest_index = i;
+        removeFromQueue(queue, furthest_index);
+
+        if(verbosity){
+            printf("<<<<<<<< Removed Page [%-3d] From Queue >>>>>>>>\n", 
+                   curr_page_num);
+            printPage(queue->list[i], 0, 1);
+        }
+
+        return furthest_index;
     }
+    if(verbosity){
+        printf("<<<<<<<< All Pages Exist in the Future >>>>>>>>\n");
+    }
+    return 0; /* Shouldn't get here? */
 }
 
 void runQueueOPT(PageTable* queue, PageTable* page_table, AddressTable* address_table, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result, uint32_t current_index)
