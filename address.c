@@ -222,7 +222,7 @@ void printPageData(char* buffer, int length)
 
 void printPageFaults(const AddressTable* address_table)
 {
-    float page_faults = address_table->page_faults/address_table->num_entries;
+    float page_faults = (float)address_table->page_faults/(float)address_table->num_entries;
 
     printf("Number of Translated Addresses = %i \n"
             "Page Faults = %i \n"

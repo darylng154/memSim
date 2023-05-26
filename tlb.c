@@ -213,7 +213,7 @@ void testTLBPRA(){
 
 void printTLBResults(const TLBTable* tlb_table, uint32_t num_entries)
 {
-    float hit_rate = tlb_table->hits/num_entries;
+    float hit_rate = (float)tlb_table->hits/(float)num_entries;
 
     printf("TLB Hits = %i \n"
             "TLB Misses = %i \n"
