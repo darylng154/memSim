@@ -139,8 +139,7 @@ void runSimulator(AddressTable* address_table,
                     runQueuePRA(queue, 
                                 address_table, 
                                 algorithm, 
-                                seek_page_num, 
-                                &resolved_frame_num, 
+                                seek_page_num,
                                 TLB_seek_result, 
                                 PT_seek_result);
             } /* End PT Hit*/
@@ -193,7 +192,7 @@ void runSimulator(AddressTable* address_table,
         else{ /* TLB HIT*/
             new_tlb_entry.frame_num = resolved_frame_num; /* Frame num exists*/
             if(queue->num_entries > 1)
-                runQueuePRA(queue, address_table, algorithm, seek_page_num, &resolved_frame_num, TLB_seek_result, PT_seek_result);
+                runQueuePRA(queue, address_table, algorithm, seek_page_num, TLB_seek_result, PT_seek_result);
 
         }
     
