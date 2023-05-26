@@ -4,8 +4,6 @@ void initPage(Page* page)
 {
     page->frame_num = 0;
     page->valid = 0;
-
-    page->hit = 0;
 }
 
 void initPageTable(PageTable* page_table, uint16_t length)
@@ -177,7 +175,7 @@ void removeFromQueue(PageTable* queue, uint8_t index)
 }
 
 // run QueuePRA - replace page in Queue & page fault++
-void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algorithm, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result)
+void runQueuePRA(PageTable* queue, PageTable* page_table, AddressTable* address_table, Algorithm algorithm, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result, uint32_t current_index)
 {
     switch(algorithm)
     {
@@ -197,6 +195,7 @@ void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algori
         case OPT:
             if(verbosity)
                 printf("runQueuePRA OPT\n");
+            runQueueOPT(queue, page_table, address_table, seek_page_num, TLB_seek_result, PT_seek_result, current_index);
             break;
 
         default:
@@ -294,44 +293,76 @@ void slideQueue(PageTable* queue, uint8_t popped_pos)
 }
 
 // check each entry in Queue that does not exist in the future (in AddressTable->list)
-void removeNoFutureInQueue(PageTable* queue, AddressTable* address_table, uint32_t current_index)
+// 0 == not found, 1 == removed page num (to invalidate)
+uint8_t removeNoFutureInQueue(PageTable* queue, PageTable* page_table, AddressTable* address_table, uint32_t current_index)
 {
     int i = 0, j = 0;
-    // for(i = current_index; i < address_table->num_entries; i++)
-    // {
-        
-    // }
-    uint8_t farthest_page_num = 0;
-    for(i = 0; i < queue->num_entries; i++)
+
+    for(i = queue->num_entries - 1; i > 0; i--)     // changed to FIFO
+    // for(i = 0; i < queue->num_entries; i++)  // might be incorrect
     {
-        // check the all items from the next index (= current address list entry + 1)
-        for(j = current_index + 1; j < address_table->num_entries; i++)
+        // check the all items from the next index (= current address + 1)
+        // j <= address_table->num_entries: checked all addresses
+        for(j = current_index + 1; j <= address_table->num_entries; j++)
         {
-            // if not in the future address list => remove
-            if(queue->list[i].frame_num != address_table->list[i].page_num)
+            if(j == address_table->num_entries)
             {
-                removeFromQueue(queue, i);
+                // if not in the future address list => remove
+                if(queue->list[i].frame_num != address_table->list[j].page_num)
+                {
+                    if(verbosity)
+                    {
+                        printf("removeNoFutureInQueue | removed: ");
+                        printPage(queue->list[i], 0, 1);
+                    }
+                    removeFromQueue(queue, i);
+
+                    return queue->list[i].frame_num;
+                }
             }
         }
     }
 
+    return 0;
 }
 
 void removeFurthestInQueue(PageTable* queue, AddressTable* address_table, uint32_t current_index)
 {
-    
+    int i = 0, j = 0, furthest_index = 0;
+
+    for(i = 0; i < queue->num_entries; i++)
+    {
+        // check the all items from the back of the queue to current address
+        for(j = address_table->num_entries - 1; j > current_index; j--)
+        {
+            // // if queue page num is found, check if its the largest index
+            // if(queue->list[i].frame_num == address_table->list[j].page_num)
+            // {
+            //     if(verbosity)
+            //     {
+            //         printf("removeNoFutureInQueue removed | ");
+            //         printPage(queue->list[i], 0, 1);
+            //     }
+            //     removeFromQueue(queue, i);
+
+            // }
+        }
+    }
 }
 
-void runQueueOPT(PageTable* queue, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result)
+void runQueueOPT(PageTable* queue, PageTable* page_table, AddressTable* address_table, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result, uint32_t current_index)
 {
+    uint8_t isInFuture = 0;
     if(TLB_seek_result == MISS && PT_seek_result == MISS)
     {
-        removeLastInQueue(queue);
+        isInFuture = removeNoFutureInQueue(queue, page_table, address_table, current_index);
+        // if(!isInFuture)
+        //     removeFurthestInQueue(queue, address_table, current_index);
 
         // inject
         setPage(queue->list, 0, seek_page_num, 1);
 
         if(verbosity)
-            printf("runQueueFIFO | page_num: %i | num_entries: %i \n", seek_page_num, queue->num_entries);
+            printf("runQueueOPT | page_num: %i | num_entries: %i \n", seek_page_num, queue->num_entries);
     }
 }

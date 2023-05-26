@@ -46,7 +46,7 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
     if(errno) /* Something went wrong*/
         errorout("ReadFile failed.\n");
 
-    // if(verbosity)
+    if(verbosity)
         printf("Total number of addresses: %u\n", running_count);
     
     *address_count = running_count; /* Save job count*/
@@ -132,11 +132,13 @@ void runSimulator(AddressTable* address_table,
                 // 1. update Queue if LRU
                 if(algorithm == LRU && queue->num_entries > 1)
                     runQueuePRA(queue, 
+                                page_table,
                                 address_table, 
                                 algorithm, 
                                 seek_page_num,
                                 TLB_seek_result, 
-                                PT_seek_result);
+                                PT_seek_result,
+                                i);
             } /* End PT Hit*/
             else /* PT Miss*/
             {
@@ -170,7 +172,7 @@ void runSimulator(AddressTable* address_table,
                     // save (page that will be replaced) last entry in queue's frame_num from the page table
                     uint8_t replaced_page_num = queue->list[queue->num_entries - 1].frame_num;
                     resolved_frame_num = page_table->list[replaced_page_num].frame_num;
-                    runQueuePRA(queue, address_table, algorithm, seek_page_num, TLB_seek_result, PT_seek_result);
+                    runQueuePRA(queue, page_table, address_table, algorithm, seek_page_num, TLB_seek_result, PT_seek_result, i);
                     updatePageTable(page_table->list, replaced_page_num, seek_page_num, resolved_frame_num);
                 }
             }/* End PT Miss*/
@@ -187,7 +189,7 @@ void runSimulator(AddressTable* address_table,
         else{ /* TLB HIT*/
             new_tlb_entry.frame_num = resolved_frame_num; /* Frame num exists*/
             if(queue->num_entries > 1)
-                runQueuePRA(queue, address_table, algorithm, seek_page_num, TLB_seek_result, PT_seek_result);
+                runQueuePRA(queue, page_table, address_table, algorithm, seek_page_num, TLB_seek_result, PT_seek_result, i);
 
         }
     
@@ -262,7 +264,7 @@ int main(int argc, char *argv[]){
 
     tlb_table = safeMalloc(sizeof(TLBTable));
     initTLBTable(tlb_table, MAX_TLB_ENTRIES_, num_frames);
-    tlb_table->max_entries = 5;
+    // tlb_table->max_entries = 5;
 
     page_table = safeMalloc(sizeof(PageTable));
     initPageTable(page_table, MAX_FRAME_SIZE_);

@@ -217,7 +217,7 @@ void printTLBResults(const TLBTable* tlb_table, uint32_t num_entries)
 
     printf("TLB Hits = %i \n"
             "TLB Misses = %i \n"
-            "TLB Hit Rate = %3.2f \n",
+            "TLB Hit Rate = %3.3f \n",
             tlb_table->hits,
             tlb_table->miss,
             hit_rate);
