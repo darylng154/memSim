@@ -175,7 +175,6 @@ void runSimulator(AddressTable* address_table,
             }/* End PT Miss*/
 
             // 4. update TLB w/ missing page
-            new_tlb_entry.page_num = seek_page_num;
             new_tlb_entry.frame_num = resolved_frame_num;
 
             if(!isTLBFull(tlb_table))
