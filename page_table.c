@@ -144,3 +144,66 @@ void addToQueue(PageTable* queue, uint8_t page_num)
     if(verbosity)
         printf("addToQueue | page_num: %i | num_entries: %i \n", page_num, queue->num_entries);
 }
+
+
+void runQueueLRU(PageTable* queue, Seek TLB_seek_result, Seek PT_seek_result, TLBEntry new_tlb_entry){
+    
+    uint8_t queue_pos;
+    
+    queue_pos = getQueuePosition(queue, new_tlb_entry.page_num);
+
+// void addToQueue(PageTable* queue, uint8_t page_num)
+// {
+    // int i = 0;
+    // for(i = queue->num_entries; i > 0; i--)
+    // {
+        // swap to make room
+    //     pageSwap(&queue->list[i], &queue->list[i-1]);
+    // }
+
+    if(TLB_seek_result == HIT){
+        queue->list[queue_pos];
+    }
+    else if(PT_seek_result == HIT){
+
+    }
+    else if(PT_seek_result == MISS){
+
+    }
+}
+
+uint8_t getQueuePosition(PageTable* queue, uint8_t page_num){
+    int queue_pos;
+    uint8_t curr_page_num; /* Queue page num is stored in frame_num*/
+
+    for(queue_pos = queue->num_entries; queue_pos > 0; queue_pos--){
+        curr_page_num = queue->list[queue_pos].frame_num; /* For clarity, queue frame num = page num*/
+        if(curr_page_num == page_num){
+            if(verbosity){
+                printf("Queue[%-3d]: ", queue_pos);
+                printPage(queue->list[queue_pos], 0, PRINT_QUEUE_);
+            }
+            return queue_pos;
+        }
+    }
+    
+    errorout("Something went wrong. Can't find page in queue");
+    return 0;
+}
+
+void reorderQueue(PageTable* queue, uint8_t queue_pos){
+    Page temp_page;
+    temp_page = queue->list[queue_pos]; /* Store the queue page*/
+    slideQueue(queue, queue_pos); /* Slide queue and leave a spot at the front*/
+    /* Push to back of queue*/
+}
+
+void slideQueue(PageTable* queue, uint8_t popped_pos){
+    int queue_pos;
+
+    for(queue_pos = popped_pos; queue_pos > 0; queue_pos--){
+
+    }
+
+    return;
+}

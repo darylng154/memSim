@@ -41,5 +41,9 @@ Seek checkPageTable(uint8_t page_num, PageTable* page_table, uint8_t *resolved_f
 int isQueueFull(PageTable* queue, uint8_t max_entries);
 // inject to front(queue[0] = MRU) based on Algorithm
 void addToQueue(PageTable* queue, uint8_t page_num);
+void runQueueLRU(PageTable* queue, Seek TLB_seek_result, Seek PT_seek_result, TLBEntry new_tlb_entry);
+uint8_t getQueuePosition(PageTable* queue, uint8_t page_num);
+void reorderQueue(PageTable* queue, uint8_t queue_pos);
+void slideQueue(PageTable* queue, uint8_t popped_pos);
 
 #endif
