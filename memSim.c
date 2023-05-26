@@ -22,7 +22,6 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
     unsigned int *addresses = NULL;
 
     addresses = (unsigned int *)safeMalloc(sizeof(unsigned int) * buffer_size); /* Make space*/
-    // addresses = (unsigned int *)calloc(buffer_size, buffer_size)
 
     errno = 0;
     while(!feof(file_ptr)){ /* While not at EOF*/
@@ -33,7 +32,6 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
                     printf("Address: %u\n", address);
                 addresses[running_count++] = address; /* Store address*/
             }
-                // running_count++; /* Increment running address counter*/
             if(running_count >= (buffer_size - 1)){ /* Need more space*/
                 addresses = (unsigned int *)safeRealloc(addresses, buffer_size + BUFFER_, buffer_size, sizeof(unsigned int));
                 buffer_size += BUFFER_; /* Increase buffer size*/
@@ -46,7 +44,7 @@ void readFile(FILE *file_ptr, unsigned int **address_list, unsigned int *address
     if(errno) /* Something went wrong*/
         errorout("ReadFile failed.\n");
 
-    // if(verbosity)
+    if(verbosity)
         printf("Total number of addresses: %u\n", running_count);
     
     *address_count = running_count; /* Save job count*/
@@ -263,7 +261,6 @@ int main(int argc, char *argv[]){
 
     tlb_table = safeMalloc(sizeof(TLBTable));
     initTLBTable(tlb_table, MAX_TLB_ENTRIES_, num_frames);
-    tlb_table->max_entries = 5;
 
     page_table = safeMalloc(sizeof(PageTable));
     initPageTable(page_table, MAX_FRAME_SIZE_);

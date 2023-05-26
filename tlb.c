@@ -13,11 +13,10 @@ void initTLBTable(TLBTable* tlb_table, uint8_t length, uint8_t num_frames)
     tlb_table->miss = 0;
     tlb_table->hits = 0;
 
-    // if(num_frames + 1 >= MAX_TLB_ENTRIES_) /* If there are at least 16 frames*/
-    //     tlb_table->max_entries = MAX_TLB_ENTRIES_; /* Set max entries to 16*/
-    // else
-    //     tlb_table->max_entries = num_frames + 1; /* Else TLB will only hold < 16*/
-        tlb_table->max_entries = 5; /* Else TLB will only hold < 16*/
+    if(num_frames + 1 >= MAX_TLB_ENTRIES_) /* If there are at least 16 frames*/
+        tlb_table->max_entries = MAX_TLB_ENTRIES_; /* Set max entries to 16*/
+    else
+        tlb_table->max_entries = num_frames + 1; /* Else TLB will only hold < 16*/
 
     tlb_table->num_entries = 0;
 
@@ -63,15 +62,13 @@ void tlbSwap(TLBEntry* dest, TLBEntry* src)
     *src = temp;
 }
 
-// void setTLB(TLBEntry* list, uint8_t index, uint8_t page_num, uint8_t frame_num) // Changed from
-void setTLB(TLBEntry* list, uint8_t index, const TLBEntry tlb_entry)    // to
+void setTLB(TLBEntry* list, uint8_t index, const TLBEntry tlb_entry)
 {
     list[index].page_num = tlb_entry.page_num;
     list[index].frame_num = tlb_entry.frame_num;
 }
 
-// void addPageToTLBTable(TLBTable* tlb_table, uint8_t page_num, uint8_t frame_num) // Changed from
-void addPageToTLBTable(TLBTable* tlb_table, const TLBEntry tlb_entry) // Changed to
+void addPageToTLBTable(TLBTable* tlb_table, const TLBEntry tlb_entry)
 {
     setTLB(tlb_table->list, tlb_table->num_entries, tlb_entry);
     tlb_table->num_entries++;
@@ -94,12 +91,6 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
             *frame_num = tlb_table->list[TLB_entry].frame_num;
             if(verbosity)
                 printf("<<<<<<<< TLB: Page %i Exists. Its mapped to frame %i >>>>>>>>\n", page_num, *frame_num);
-            // if(algorithm == LRU)
-            //     ; /* Adjust queue location. Put to front of queue, like it's the newest entry*/
-            // else if(algorithm == OPT)
-            //     ; /* Do magic*/
-            // else /* FIFO*/
-            //     ; /* Do nothing*/
             tlb_table->hits++; /* Page was found*/
             return HIT;
         }
@@ -205,9 +196,6 @@ void testTLBPRA(){
         entry.page_num    = i;
         runTLBPRA(tlb_table, entry);
     }
-
-
-
 
     return;
 }

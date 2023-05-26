@@ -153,20 +153,6 @@ uint8_t maskOffset(const uint16_t right_most_bits)
     return result;
 }
 
-/* I think this function is a bit confused on what we are wanting to do. 
-    Here we want to populate the page_data but the page_data number doesn't get set
-    until the page is added to the page table. It would seem wrong to add 
-    every address entry with a page_data number as the address might not have one
-    until its it is added to the page or swapped in.
-
-    => yeah we need to update the code so we set the page_data num when we change the page_table
-
-   My thoughts are change the name of address_table's page_data[] variable
-    to page_data[]. This would make sense since the page data comes from the
-    bin file and we wont have to worry about the frame_num. Plus we are using the
-    page number to parse into the bin buffer.
-    Also we might conside changing the function name to populate PageData 
-    */
 void populatePageData(AddressTable* address_table, char* bin_buffer)
 {
     // implement reading data from bin for the specified 
