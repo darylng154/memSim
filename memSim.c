@@ -190,6 +190,7 @@ void runSimulator(AddressTable* address_table,
 
         }
     
+        address_table->list[i].frame_num = new_tlb_entry.frame_num;
 
         // Moved back to inside hit/miss loops
         // 1. check queue if page fault or hit
