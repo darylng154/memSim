@@ -162,7 +162,7 @@ void removeLastInQueue(PageTable* queue)
 }
 
 // run QueuePRA - replace page in Queue & page fault++
-void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algorithm, uint8_t page_num, uint8_t *resolved_frame_num, Seek TLB_seek_result, Seek PT_seek_result)
+void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algorithm, uint8_t seek_page_num, uint8_t *resolved_frame_num, Seek TLB_seek_result, Seek PT_seek_result)
 {
     switch(algorithm)
     {
@@ -170,7 +170,7 @@ void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algori
             if(verbosity)
                 printf("runQueuePRA FIFO\n");
 
-            runQueueFIFO(queue, page_num, TLB_seek_result, PT_seek_result);
+            runQueueFIFO(queue, seek_page_num, TLB_seek_result, PT_seek_result);
             break;
 
         case LRU:
@@ -192,17 +192,17 @@ void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algori
     address_table->page_faults++;
 }
 
-void runQueueFIFO(PageTable* queue, uint8_t page_num, Seek TLB_seek_result, Seek PT_seek_result)
+void runQueueFIFO(PageTable* queue, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result)
 {
     if(TLB_seek_result == MISS && PT_seek_result == MISS)
     {
         removeLastInQueue(queue);
 
         // inject
-        setPage(queue->list, 0, page_num, 1);
+        setPage(queue->list, 0, seek_page_num, 1);
 
         if(verbosity)
-            printf("runQueueFIFO | page_num: %i | num_entries: %i \n", page_num, queue->num_entries);
+            printf("runQueueFIFO | page_num: %i | num_entries: %i \n", seek_page_num, queue->num_entries);
     }
 }
 
