@@ -212,7 +212,7 @@ void printPageFaults(const AddressTable* address_table)
 
     printf("Number of Translated Addresses = %i \n"
             "Page Faults = %i \n"
-            "Page Fault Rate = %3.2f \n", 
+            "Page Fault Rate = %3.3f \n", 
             address_table->num_entries,
             address_table->page_faults,
             page_faults

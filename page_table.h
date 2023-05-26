@@ -14,9 +14,6 @@ struct page
     // if its PageTable* Queue->frame_num = page num
     uint8_t frame_num;
     uint8_t valid;
-
-    // for OPT Algorithm
-    uint32_t hit;
 };
 
 struct page_table
@@ -46,7 +43,7 @@ void addToQueue(PageTable* queue, uint8_t page_num);
 void removeLastInQueue(PageTable* queue);
 void removeFromQueue(PageTable* queue, uint8_t index);
 // run QueuePRA - replace page in Queue & page fault++
-void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algorithm, uint8_t page_num, Seek TLB_seek_result, Seek PT_seek_result);
+void runQueuePRA(PageTable* queue, PageTable* page_table, AddressTable* address_table, Algorithm algorithm, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result, uint32_t current_index);
 void runQueueFIFO(PageTable* queue, AddressTable* address_table, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result);
 // update page table (removed & added page)
 void updatePageTable(Page* list, uint8_t old_page_num, uint8_t new_page_num, uint8_t frame_num);
@@ -54,5 +51,10 @@ void runQueueLRU(PageTable* queue, AddressTable* address_table, Seek TLB_seek_re
 uint8_t getQueuePosition(PageTable* queue, uint8_t page_num);
 void reorderQueue(PageTable* queue, uint8_t queue_pos);
 void slideQueue(PageTable* queue, uint8_t popped_pos);
+// check each entry in Queue that does not exist in the future (in AddressTable->list)
+// 0 == not found, 1 == removed page num (to invalidate)
+uint8_t removeNoFutureInQueue(PageTable* queue, PageTable* page_table, AddressTable* address_table, uint32_t current_index);
+void removeFurthestInQueue(PageTable* queue, AddressTable* address_table, uint32_t current_index);
+void runQueueOPT(PageTable* queue, PageTable* page_table, AddressTable* address_table, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result, uint32_t current_index);
 
 #endif
