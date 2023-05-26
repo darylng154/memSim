@@ -17,7 +17,7 @@ struct address
     uint8_t page_num;
     uint8_t offset;
 
-    int byte_referenced;
+    int8_t byte_referenced;
     uint8_t frame_num;
     uint8_t page_data[MAX_FRAME_SIZE_];
 };

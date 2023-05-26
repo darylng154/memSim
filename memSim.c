@@ -218,9 +218,10 @@ void printResults(const AddressTable* address_table, const TLBTable* tlb_table)
 
         // print page_data & new line after
         printPageData((char*)address_table->list[i].page_data, MAX_FRAME_SIZE_);
-        printPageFaults(address_table);
-        printTLBResults(tlb_table, address_table->num_entries);
     }
+
+    printPageFaults(address_table);
+    printTLBResults(tlb_table, address_table->num_entries);
 }
 
 int main(int argc, char *argv[]){
