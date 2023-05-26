@@ -4,6 +4,8 @@
 #include "address.h"
 #include "tlb.h"
 
+#define PRINT_QUEUE_ 1
+
 typedef struct page Page;
 typedef struct page_table PageTable;
 
@@ -46,5 +48,9 @@ void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algori
 void runQueueFIFO(PageTable* queue, uint8_t page_num, Seek TLB_seek_result, Seek PT_seek_result);
 // update page table (removed & added page)
 void updatePageTable(Page* list, uint8_t old_page_num, uint8_t new_page_num, uint8_t frame_num);
+void runQueueLRU(PageTable* queue, Seek TLB_seek_result, Seek PT_seek_result, TLBEntry new_tlb_entry);
+uint8_t getQueuePosition(PageTable* queue, uint8_t page_num);
+void reorderQueue(PageTable* queue, uint8_t queue_pos);
+void slideQueue(PageTable* queue, uint8_t popped_pos);
 
 #endif

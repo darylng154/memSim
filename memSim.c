@@ -113,7 +113,7 @@ void runSimulator(AddressTable* address_table,
     for(i = 0; i < address_table->num_entries; i++)
     {
         seek_page_num = address_table->list[i].page_num;
-        new_tlb_entry.page_num = seek_page_num;
+        new_tlb_entry.page_num  = seek_page_num;
         TLB_seek_result = checkTLB(tlb_table, algorithm, seek_page_num, &resolved_frame_num);
         
         if(TLB_seek_result == MISS){
@@ -123,7 +123,6 @@ void runSimulator(AddressTable* address_table,
             // PT_seek_result = HIT;
             if(PT_seek_result == HIT)
             {
-                // new_tlb_entry.page_num  = seek_page_num;
                 new_tlb_entry.frame_num = resolved_frame_num;
 
                 // hit: 
@@ -176,7 +175,6 @@ void runSimulator(AddressTable* address_table,
             }/* End PT Miss*/
 
             // 4. update TLB w/ missing page
-            new_tlb_entry.page_num = seek_page_num;
             new_tlb_entry.frame_num = resolved_frame_num;
 
             if(!isTLBFull(tlb_table))
@@ -185,9 +183,13 @@ void runSimulator(AddressTable* address_table,
                 runTLBPRA(tlb_table, new_tlb_entry);
 
         }/* End TLB MISS*/
-        else /* Hit in TLB means Hit in Page Table*/
-            // set new_tlb_entry's frame # & page #
-            ;
+        else{ /* TLB HIT*/
+            new_tlb_entry.frame_num = resolved_frame_num; /* Frame num exists*/
+            if(queue->num_entries > 1)
+                runQueueLRU(queue, TLB_seek_result, PT_seek_result, new_tlb_entry);
+
+        }
+    
 
         // Moved back to inside hit/miss loops
         // 1. check queue if page fault or hit
