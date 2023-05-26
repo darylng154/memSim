@@ -172,13 +172,13 @@ void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algori
             if(verbosity)
                 printf("runQueuePRA FIFO\n");
 
-            runQueueFIFO(queue, seek_page_num, TLB_seek_result, PT_seek_result);
+            runQueueFIFO(queue, address_table, seek_page_num, TLB_seek_result, PT_seek_result);
             break;
 
         case LRU:
             if(verbosity)
                 printf("runQueuePRA LRU\n");
-            runQueueLRU(queue, TLB_seek_result, PT_seek_result, seek_page_num);
+            runQueueLRU(queue, address_table, TLB_seek_result, PT_seek_result, seek_page_num);
             break;
 
         case OPT:
@@ -191,11 +191,9 @@ void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algori
             exit(EXIT_FAILURE);
             break;
     }
-
-    address_table->page_faults++;
 }
 
-void runQueueFIFO(PageTable* queue, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result)
+void runQueueFIFO(PageTable* queue, AddressTable* address_table, uint8_t seek_page_num, Seek TLB_seek_result, Seek PT_seek_result)
 {
     if(TLB_seek_result == MISS && PT_seek_result == MISS)
     {
@@ -206,6 +204,8 @@ void runQueueFIFO(PageTable* queue, uint8_t seek_page_num, Seek TLB_seek_result,
 
         if(verbosity)
             printf("runQueueFIFO | page_num: %i | num_entries: %i \n", seek_page_num, queue->num_entries);
+
+        address_table->page_faults++;
     }
 }
 
@@ -219,7 +219,7 @@ void updatePageTable(Page* list, uint8_t old_page_num, uint8_t new_page_num, uin
 }
 
 
-void runQueueLRU(PageTable* queue, Seek TLB_seek_result, Seek PT_seek_result, uint8_t page_num)
+void runQueueLRU(PageTable* queue, AddressTable* address_table, Seek TLB_seek_result, Seek PT_seek_result, uint8_t page_num)
 {
     uint8_t queue_pos;
     
@@ -235,7 +235,7 @@ void runQueueLRU(PageTable* queue, Seek TLB_seek_result, Seek PT_seek_result, ui
     }
     else if(PT_seek_result == MISS)
     {
-        runQueueFIFO(queue, page_num, TLB_seek_result, PT_seek_result);
+        runQueueFIFO(queue, address_table, page_num, TLB_seek_result, PT_seek_result);
     }
     return;
 }

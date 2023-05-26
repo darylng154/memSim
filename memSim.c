@@ -205,9 +205,11 @@ void runSimulator(AddressTable* address_table,
         if(verbosity)
         {
             printf("#################################  after TLB & Page Table HIT/MISS  #################################");
-            printTLBTableDebug(tlb_table, 0);
+            printf("\n\n#################################  Address Table  #################################\n");
+            printf("| page_faults: %i \n", address_table->page_faults);
+            // printTLBTableDebug(tlb_table, 0);
             // printPageTableDebug(page_table, 0, 0);
-            // printPageTableDebug(queue, 0, 1);
+            printPageTableDebug(queue, 0, 1);
         }
     }
 }

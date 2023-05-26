@@ -13,10 +13,10 @@ void initTLBTable(TLBTable* tlb_table, uint8_t length, uint8_t num_frames)
     tlb_table->miss = 0;
     tlb_table->hits = 0;
 
-    if(num_frames >= MAX_TLB_ENTRIES_) /* If there are at least 16 frames*/
+    if(num_frames + 1 >= MAX_TLB_ENTRIES_) /* If there are at least 16 frames*/
         tlb_table->max_entries = MAX_TLB_ENTRIES_; /* Set max entries to 16*/
     else
-        tlb_table->max_entries = num_frames; /* Else TLB will only hold < 16*/
+        tlb_table->max_entries = num_frames + 1; /* Else TLB will only hold < 16*/
 
     tlb_table->num_entries = 0;
 
