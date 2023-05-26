@@ -113,6 +113,7 @@ void runSimulator(AddressTable* address_table,
     for(i = 0; i < address_table->num_entries; i++)
     {
         seek_page_num = address_table->list[i].page_num;
+        new_tlb_entry.page_num = seek_page_num;
         TLB_seek_result = checkTLB(tlb_table, algorithm, seek_page_num, &resolved_frame_num);
         
         if(TLB_seek_result == MISS){
@@ -122,17 +123,19 @@ void runSimulator(AddressTable* address_table,
             // PT_seek_result = HIT;
             if(PT_seek_result == HIT)
             {
-                new_tlb_entry.page_num  = seek_page_num;
+                // new_tlb_entry.page_num  = seek_page_num;
                 new_tlb_entry.frame_num = resolved_frame_num;
 
                 // hit: 
-                // 1. populate TLB w/ page
+                // 1. update TLB w/ page (remove & add tlb entry)
 
                 if(!isTLBFull(tlb_table))
                     // addPageToTLBTable(tlb_table, address_table->list[i].page_num, 0); // changed from
                     addPageToTLBTable(tlb_table, new_tlb_entry);    // to
                 else
                     runTLBPRA(tlb_table, new_tlb_entry);
+
+                // 2. update Queue if LRU
 
             } /* End PT Hit*/
             else /* PT Miss*/
@@ -146,51 +149,57 @@ void runSimulator(AddressTable* address_table,
                     // if Queue is not full: 
                     // 1. validate page_num in page table
                     // 2. addtoQueue(): inject to front(queue[0]) based on Algorithm
+                    // 3. page fault++
 
                     // else if is full:
-                    // 1. run QueuePRA
+                    // 1. run QueuePRA - replace page in Queue & page fault++
                     // 2. update page table (removed & added page)
 
                 if(!isQueueFull(queue, num_frames))
                 {
                     resolved_frame_num = page_table->num_entries;
-                    setPage(page_table->list, address_table->list[i].page_num, resolved_frame_num, 1);
+                    setPage(page_table->list, seek_page_num, resolved_frame_num, 1);
                     page_table->num_entries++;
                     
                     // set frame num in Queue here if needed
                     addToQueue(queue, address_table->list[i].page_num);     // move to outside of hit/miss check
+                    address_table->page_faults++;
                 }
                 else
                 {
-                    
+                    // save (page that will be replaced) last entry in queue's frame_num from the page table
+                    uint8_t replaced_page_num = queue->list[queue->num_entries - 1].frame_num;
+                    resolved_frame_num = page_table->list[replaced_page_num].frame_num;
+                    runQueuePRA(queue, address_table, algorithm, seek_page_num, &resolved_frame_num, TLB_seek_result, PT_seek_result);
+                    updatePageTable(page_table->list, replaced_page_num, seek_page_num, resolved_frame_num);
                 }
-
-                if(verbosity)
-                {
-                    printf("#################################  after isQueueFull Page Table  #################################");
-                    printPageTableDebug(page_table, 0, 0);
-                }
-                
-                // 3. update TLB w/ missing page
-                new_tlb_entry.page_num  = seek_page_num;
-                new_tlb_entry.frame_num = page_table->list[seek_page_num].frame_num;
-
-                if(!isTLBFull(tlb_table))
-                    addPageToTLBTable(tlb_table, new_tlb_entry);
-                else
-                    runTLBPRA(tlb_table, new_tlb_entry);
-
-                // else
-                //     runQueuePRA();
             }/* End PT Miss*/
-                // if(tlb_table->num_entries < tlb_table->max_entries)
-                //     ; /* Add page table to TLB*/
+
+            // 4. update TLB w/ missing page
+            new_tlb_entry.page_num = seek_page_num;
+            new_tlb_entry.frame_num = resolved_frame_num;
+
+            if(!isTLBFull(tlb_table))
+                addPageToTLBTable(tlb_table, new_tlb_entry);
+            else
+                runTLBPRA(tlb_table, new_tlb_entry);
+
         }/* End TLB MISS*/
         else /* Hit in TLB means Hit in Page Table*/
+            // set new_tlb_entry's frame # & page #
             ;
 
+        // Moved back to inside hit/miss loops
         // 1. check queue if page fault or hit
         // 2. put into Queue using Algorithm
+
+        if(verbosity)
+        {
+            printf("#################################  after TLB & Page Table HIT/MISS  #################################");
+            printTLBTableDebug(tlb_table, 0);
+            // printPageTableDebug(page_table, 0, 0);
+            // printPageTableDebug(queue, 0, 1);
+        }
     }
 }
 

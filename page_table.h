@@ -39,5 +39,12 @@ Seek checkPageTable(uint8_t page_num, PageTable* page_table, uint8_t *resolved_f
 int isQueueFull(PageTable* queue, uint8_t max_entries);
 // inject to front(queue[0] = MRU) based on Algorithm
 void addToQueue(PageTable* queue, uint8_t page_num);
+// remove last queue entry & make room in queue->list[0]
+void removeLastInQueue(PageTable* queue);
+// run QueuePRA - replace page in Queue & page fault++
+void runQueuePRA(PageTable* queue, AddressTable* address_table, Algorithm algorithm, uint8_t page_num, uint8_t *resolved_frame_num, Seek TLB_seek_result, Seek PT_seek_result);
+void runQueueFIFO(PageTable* queue, uint8_t page_num, Seek TLB_seek_result, Seek PT_seek_result);
+// update page table (removed & added page)
+void updatePageTable(Page* list, uint8_t old_page_num, uint8_t new_page_num, uint8_t frame_num);
 
 #endif

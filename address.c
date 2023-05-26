@@ -87,6 +87,7 @@ void printAddressTable(const AddressTable* address_table, uint8_t printFrame)
 {
     int i = 0;
     printf("\n\n#################################  Address Table  #################################\n");
+    printf("| page_faults: %i \n", address_table->page_faults);
     for(i = 0; i < address_table->num_entries; i++)
     {
         printf("AddressTable[%-3i] | ", i);
@@ -210,16 +211,16 @@ void populatePageData(AddressTable* address_table, char* bin_buffer)
                bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_) + address_table->list[i].offset, 
                1);
 
-        if(verbosity)
-        {
-            // checking if memcpys is correct => yes
-            // printf("Page Data: \n");
-            // printAddressPageData(address_table->list[i].page_data, MAX_FRAME_SIZE_);
+        // if(verbosity)
+        // {
+        //     checking if memcpys is correct => yes
+        //     printf("Page Data: \n");
+        //     printAddressPageData(address_table->list[i].page_data, MAX_FRAME_SIZE_);
 
-            // printf("Bin Data: \n");
-            // printBuffer((bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_)), 
-            //             MAX_FRAME_SIZE_);
-        }
+        //     printf("Bin Data: \n");
+        //     printBuffer((bin_buffer + (address_table->list[i].page_num * MAX_FRAME_SIZE_)), 
+        //                 MAX_FRAME_SIZE_);
+        // }
     }
 
     // if(verbosity)

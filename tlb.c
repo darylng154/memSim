@@ -50,7 +50,7 @@ void printTLBTable(const TLBEntry* list, uint8_t length, uint8_t printDetails)
 void printTLBTableDebug(const TLBTable* tlb_table, uint8_t printDetails)
 {
     printf("\n\n#################################  TLB Table  #################################\n");
-    printf("| num_entries: %i | max_entries: %i | hits: %i | miss: %i \n", tlb_table->num_entries, tlb_table->max_entries+1, tlb_table->hits, tlb_table->miss);
+    printf("| num_entries: %i | max_entries: %i | hits: %i | miss: %i \n", tlb_table->num_entries, tlb_table->max_entries, tlb_table->hits, tlb_table->miss);
     printTLBTable(tlb_table->list, tlb_table->num_entries, printDetails);
     printf("###############################################################################\n\n\n");
 }
@@ -83,7 +83,7 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
     /* If there are no entries in the tlb_table then it is a miss*/
     if(tlb_table->num_entries <= 0){
         if(verbosity)
-            printf("TLB empty; Page %i Doesn't Exist \n", page_num);
+            printf("TLB empty: Page %i Doesn't Exist \n", page_num);
         tlb_table->miss++;
         return MISS;
     }
@@ -104,6 +104,8 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
         }
     }
     /* No hit*/
+    if(verbosity)
+            printf("TLB: Page %i Doesn't Exist \n", page_num);
     tlb_table->miss++;
     return MISS;
 }
@@ -112,7 +114,7 @@ Seek checkTLB(TLBTable* tlb_table, Algorithm algorithm, uint8_t page_num, uint8_
 // returns 1 if TLBTable is Full, else 0
 int isTLBFull(TLBTable* tlb_table)
 {
-    if(tlb_table->num_entries <= tlb_table->max_entries)
+    if(tlb_table->num_entries < tlb_table->max_entries)
     {
         if(verbosity)
             printf("TLBTable is not Full! \n");
@@ -202,8 +204,6 @@ void testTLBPRA(){
 
     printf("\n\n------------------------- TLB TABLE REPLACEMENT -------------------------\n");
     printTLBTableDebug(tlb_table, 0);
-
-
 
     return;
 }
