@@ -172,7 +172,9 @@ void runSimulator(AddressTable* address_table,
                     uint8_t replaced_page_num = queue->list[queue->num_entries - 1].frame_num;
                     resolved_frame_num = page_table->list[replaced_page_num].frame_num;
                     runQueuePRA(queue, page_table, address_table, algorithm, seek_page_num, TLB_seek_result, PT_seek_result, i);
-                    updatePageTable(page_table->list, replaced_page_num, seek_page_num, resolved_frame_num);
+
+                    if(algorithm != OPT)
+                        updatePageTable(page_table->list, replaced_page_num, seek_page_num, resolved_frame_num);
                 }
             }/* End PT Miss*/
 
@@ -204,8 +206,7 @@ void runSimulator(AddressTable* address_table,
             printf("\n\n#################################  Address Table  #################################\n");
             printf("| page_faults: %i \n", address_table->page_faults);
             printTLBTableDebug(tlb_table, 0);
-            printTLBTableDebug(tlb_table, 0);
-            // printPageTableDebug(page_table, 0, 0);
+            printPageTableDebug(page_table, 0, 0);
             printPageTableDebug(queue, 0, 1);
         }
     }

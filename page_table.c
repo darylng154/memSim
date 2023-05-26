@@ -219,6 +219,8 @@ void updatePageTable(Page* list, uint8_t old_page_num, uint8_t new_page_num, uin
     setPage(list, old_page_num, frame_num, 0);
     // validate new page
     setPage(list, new_page_num, frame_num, 1);
+
+    printf("updatePageTable | old page: %i | new page: %i \n", old_page_num, new_page_num);
 }
 
 
@@ -287,30 +289,67 @@ void slideQueue(PageTable* queue, uint8_t popped_pos)
 // 0 == not found, 1 == removed page num (to invalidate)
 uint8_t removeNoFutureInQueue(PageTable* queue, PageTable* page_table, AddressTable* address_table, uint32_t current_index)
 {
-    int i = 0, j = 0;
+    // int i = 0, j = 0;
+
+    // for(i = 0; i < queue->num_entries; i++)  // might be incorrect
+    // {
+    //     // check the all items from the next index (= current address + 1)
+    //     // j <= address_table->num_entries: checked all addresses
+    //     for(j = current_index + 1; j <= address_table->num_entries; j++)
+    //     {
+    //             // if not in the future address list => remove
+    //             if(queue->list[i].frame_num != address_table->list[j].page_num)
+    //             {
+    //                 if(j == address_table->num_entries)
+    //                 {
+    //                     if(verbosity)
+    //                     {
+    //                         printf("removeNoFutureInQueue | removed: ");
+    //                         printPage(queue->list[i], 0, 1);
+    //                     }
+    //                     removeFromQueue(queue, i);
+
+    //                     return queue->list[i].frame_num;
+    //                 }
+    //             }
+    //     }
+    // }
+
+    // return 0;
+
+    int i = 0, j = 0, isInFuture = 0;
+    uint8_t old_page_num = 0;
 
     for(i = queue->num_entries - 1; i > 0; i--)     // changed to FIFO
     // for(i = 0; i < queue->num_entries; i++)  // might be incorrect
     {
+        isInFuture = 0;
         // check the all items from the next index (= current address + 1)
         // j <= address_table->num_entries: checked all addresses
-        for(j = current_index + 1; j <= address_table->num_entries; j++)
+        for(j = current_index + 1; j < address_table->num_entries; j++)
         {
-            if(j == address_table->num_entries)
-            {
                 // if not in the future address list => remove
-                if(queue->list[i].frame_num != address_table->list[j].page_num)
+                if(queue->list[i].frame_num == address_table->list[j].page_num)
                 {
-                    if(verbosity)
-                    {
-                        printf("removeNoFutureInQueue | removed: ");
-                        printPage(queue->list[i], 0, 1);
-                    }
-                    removeFromQueue(queue, i);
-
-                    return queue->list[i].frame_num;
+                    isInFuture = 1;
+                    break; // moves onto the next queue entry
                 }
+                else
+                {
+                    old_page_num = queue->list[i].frame_num;
+                }
+        }
+
+        if(j >= address_table->num_entries && !isInFuture)
+        {
+            if(verbosity)
+            {
+                printf("removeNoFutureInQueue | removed: ");
+                printPage(queue->list[i], 0, 1);
             }
+            removeFromQueue(queue, i);
+
+            return old_page_num;
         }
     }
 
@@ -368,8 +407,10 @@ void runQueueOPT(PageTable* queue, PageTable* page_table, AddressTable* address_
     if(TLB_seek_result == MISS && PT_seek_result == MISS)
     {
         isInFuture = removeNoFutureInQueue(queue, page_table, address_table, current_index);
-        // if(!isInFuture)
-        //     removeFurthestInQueue(queue, address_table, current_index);
+        if(!isInFuture)
+            isInFuture = removeFurthestInQueue(queue, address_table, current_index);
+
+        updatePageTable(page_table->list, isInFuture, seek_page_num, page_table->list[isInFuture].frame_num);
 
         // inject
         setPage(queue->list, 0, seek_page_num, 1);
